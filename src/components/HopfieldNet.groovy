@@ -28,6 +28,7 @@ class HopfieldNet {
 
     /**
      * 非同期更新：ランダムに選んだ１ユニットのみを更新する
+     * TODO 同期更新（全ユニットをまとめて更新）も実装しておくべき？
      */
     public void update(){
         Neuron neuron = getRandom(neurons)
@@ -36,11 +37,19 @@ class HopfieldNet {
         double weightedSum = weights.getFriends(neuron).sum {Neuron friend ->
             weights.get(friend, neuron) * friend.value
         } - neuron.theta
-        neuron.value = weightedSum >= 0 ? 1 : -1
+        // いわゆるsign関数
+        neuron.value = weightedSum >= neuron.theta ? 1 : -1
     }
 
+    /**
+     * エネルギーを返す。式に注意。すべてのユニット組み合わせ（対角線）だけ加算するのではなく、
+     * 総当たり重複組み合わせ（ユニットi->jをみた組み合わせ≠ユニットjからiをみた組み合わせは別物としてカウント）
+     * そうしないとエネルギー関数が単調減少にならない
+     * @return
+     */
     public double getEnergy(){
-        - weights.combinations.sum{ List<Neuron> pair ->
+        - [neurons, neurons].combinations().sum{ List<Neuron> pair ->
+            if(pair[0] == pair[1]) return 0 // 自己結合はカウントしない
             weights.get(pair[0], pair[1]) * pair[0].value * pair[1].value
         } / 2 + neurons.sum{ Neuron neuron ->
             neuron.value * neuron.theta
