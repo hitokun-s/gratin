@@ -35,6 +35,8 @@ class HopfieldNetSpec extends Specification{
 
     def "recall"(){
         given:
+            // 理論によれば、正しく記憶できるパターン数は、「ニューロンユニット数×0.15」
+            // よって２パターンを想起させるためには、2 / 0.15 = 13.3個のユニットが必要なはず
             def net = new HopfieldNet(13)
             net.memorize([
                 [1,-1,-1,1,-1,1,1,1,-1,-1,1,-1,1],
@@ -42,6 +44,7 @@ class HopfieldNetSpec extends Specification{
             ])
         when:
             // ノイズとして、10番目を-1に変えてみる
+            // TODO 正しく想起できるノイズの割合の理論値は？
             def res = net.recall([1,-1,-1,1,-1,1,1,1,-1,1,1,-1,1])
         then:
             // 元のパターンが想起される
