@@ -4,19 +4,19 @@ import util.Relations
 
 import static util.Util.*
 
-// TODO ‚Æ‚è‚ ‚¦‚¸‘‚¢‚Ä‚İ‚éB‚ ‚Æ‚Å®—‚·‚éBƒlƒbƒgƒ[ƒN‚Ìƒ^ƒCƒv‚²‚Æ‚É‚Ü‚Æ‚ß‚È‚¨‚·B
+// TODO ã¨ã‚Šã‚ãˆãšæ›¸ã„ã¦ã¿ã‚‹ã€‚ã‚ã¨ã§æ•´ç†ã™ã‚‹ã€‚ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ã®ã‚¿ã‚¤ãƒ—ã”ã¨ã«ã¾ã¨ã‚ãªãŠã™ã€‚
 /**
  * Hopfield Network
- * ˜A‘z‹L‰¯‚ª‚Å‚«‚é‚Ü‚ÅÀ‘•Bdeep learning‚ÌBolzmann machine‚ÌŠî‘b‚Æ‚¢‚¤ˆÓ–¡‚Å‚Í©ŒÈ‘ŠŠÖ‹L‰¯‚ªd—vH
- * QlFhttp://ipr20.cs.ehime-u.ac.jp/~kinoshita/exp3/pdf_file/neuro2.pdf
+ * é€£æƒ³è¨˜æ†¶ãŒã§ãã‚‹ã¾ã§å®Ÿè£…ã€‚deep learningã®Bolzmann machineã®åŸºç¤ã¨ã„ã†æ„å‘³ã§ã¯è‡ªå·±ç›¸é–¢è¨˜æ†¶ãŒé‡è¦ï¼Ÿ
+ * å‚è€ƒï¼šhttp://ipr20.cs.ehime-u.ac.jp/~kinoshita/exp3/pdf_file/neuro2.pdf
  */
 class HopfieldNet {
 
-    List<Neuron> neurons = [] // ƒ†ƒjƒbƒg‚Ìó‘Ô‚ÍA{+1, -1}
-    Relations weights // ƒ†ƒjƒbƒgŠÔ‘ŠŒİŒ‹‡‚Ìd‚İ
+    List<Neuron> neurons = [] // ãƒ¦ãƒ‹ãƒƒãƒˆã®çŠ¶æ…‹ã¯ã€{+1, -1}
+    Relations weights // ãƒ¦ãƒ‹ãƒƒãƒˆé–“ç›¸äº’çµåˆã®é‡ã¿
 
-    // ‚±‚Ì‰ñ”‚¾‚¯update‚µ‚Ä‚àƒGƒlƒ‹ƒM[ŠÖ”‚ªŒ¸­‚µ‚È‚¯‚ê‚ÎA‹É¬’l‚Æ”»’è‚·‚é
-    // TODO —˜_“I‚ÉŒˆ’è‚·‚é•û–@‚ğ’²‚×‚ÄƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ÉÀ‘•
+    // ã“ã®å›æ•°ã ã‘updateã—ã¦ã‚‚ã‚¨ãƒãƒ«ã‚®ãƒ¼é–¢æ•°ãŒæ¸›å°‘ã—ãªã‘ã‚Œã°ã€æ¥µå°å€¤ã¨åˆ¤å®šã™ã‚‹
+    // TODO ç†è«–çš„ã«æ±ºå®šã™ã‚‹æ–¹æ³•ã‚’èª¿ã¹ã¦ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã«å®Ÿè£…
     int recallThreshHold = 100
 
     public HopfieldNet(int unitCnt) {
@@ -27,12 +27,12 @@ class HopfieldNet {
     }
 
     /**
-     * ”ñ“¯ŠúXVFƒ‰ƒ“ƒ_ƒ€‚É‘I‚ñ‚¾‚Pƒ†ƒjƒbƒg‚Ì‚İ‚ğXV‚·‚é
+     * éåŒæœŸæ›´æ–°ï¼šãƒ©ãƒ³ãƒ€ãƒ ã«é¸ã‚“ã ï¼‘ãƒ¦ãƒ‹ãƒƒãƒˆã®ã¿ã‚’æ›´æ–°ã™ã‚‹
      */
     public void update(){
         Neuron neuron = getRandom(neurons)
         // TODO ugly code
-        // d‚İ•t‚¯‘˜a
+        // é‡ã¿ä»˜ã‘ç·å’Œ
         double weightedSum = weights.getFriends(neuron).sum {Neuron friend ->
             weights.get(friend, neuron) * friend.value
         } - neuron.theta
@@ -48,14 +48,11 @@ class HopfieldNet {
     }
 
     /**
-     * i•¡”‚Ìjƒpƒ^[ƒ“‚ğ‹L‰¯‚³‚¹‚éB‹ï‘Ì“I‚É‚Íd‚İ‚ğİ’è‚·‚é
+     * ï¼ˆè¤‡æ•°ã®ï¼‰ãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’è¨˜æ†¶ã•ã›ã‚‹ã€‚å…·ä½“çš„ã«ã¯é‡ã¿ã‚’è¨­å®šã™ã‚‹
      */
     public void memorize(List<List<Integer>> patterns){
         patterns.each{List<Integer> pattern ->
             setValues(pattern)
-//            neurons.eachWithIndex{ Neuron neuron, int i ->
-//                neuron.value = pattern.get(i) as double
-//            }
             weights.combinations.each{ List<Neuron> pair ->
                 // TODO too ugly, you must die
                 weights.set(pair[0], pair[1], weights.get(pair[0], pair[1]) + pair[0].value * pair[1].value)
@@ -64,7 +61,7 @@ class HopfieldNet {
     }
 
     /**
-     * ƒeƒXƒg‚Å‚à•Ö—˜‚È‚Í‚¸
+     * ãƒ†ã‚¹ãƒˆã§ã‚‚ä¾¿åˆ©ãªã¯ãš
      * @param values
      */
     public void setValues(List<Double> values){
@@ -78,18 +75,18 @@ class HopfieldNet {
     }
 
     /**
-     * ‘z‹N‚·‚é
+     * æƒ³èµ·ã™ã‚‹
      * @return
      */
     public int[] recall(List<Double> input){
         setValues(input)
         double prevE,currE
-        int keepCnt = 0 // ƒGƒlƒ‹ƒM[‚ª•Ï‰»‚µ‚È‚©‚Á‚½‰ñ”
+        int keepCnt = 0 // ã‚¨ãƒãƒ«ã‚®ãƒ¼ãŒå¤‰åŒ–ã—ãªã‹ã£ãŸå›æ•°
         while(keepCnt < recallThreshHold){
             prevE = getEnergy()
             update()
             currE = getEnergy()
-            assert currE <= prevE // Œ¸­‚µ‚È‚¢‚Æ‚¨‚©‚µ‚¢
+            assert currE <= prevE // æ¸›å°‘ã—ãªã„ã¨ãŠã‹ã—ã„
             if(currE == prevE){
                 keepCnt++
             }else{

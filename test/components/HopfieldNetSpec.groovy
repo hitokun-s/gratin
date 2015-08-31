@@ -12,7 +12,7 @@ class HopfieldNetSpec extends Specification{
                 [1,1,-1,1,-1,1,-1,-1,-1,1]
             ])
         when:
-            net.setValues([1,1,1,1,1,1,1,1,1,1]) // “K“–‚È“ü—Í’l
+            net.setValues([1,1,1,1,1,1,1,1,1,1]) // é©å½“ãªå…¥åŠ›å€¤
             def eng_before = net.energy
             10.times{
                 net.update()
@@ -41,11 +41,10 @@ class HopfieldNetSpec extends Specification{
                 [1,1,-1,1,-1,1,-1,-1,-1,1,-1,1,-1]
             ])
         when:
-            // ƒmƒCƒY‚Æ‚µ‚ÄA10”Ô–Ú‚ğ-1‚É•Ï‚¦‚Ä‚İ‚é
+            // ãƒã‚¤ã‚ºã¨ã—ã¦ã€10ç•ªç›®ã‚’-1ã«å¤‰ãˆã¦ã¿ã‚‹
             def res = net.recall([1,-1,-1,1,-1,1,1,1,-1,1,1,-1,1])
         then:
-            // Œ³‚Ìƒpƒ^[ƒ“‚ª‘z‹N‚³‚ê‚é
+            // å…ƒã®ãƒ‘ã‚¿ãƒ¼ãƒ³ãŒæƒ³èµ·ã•ã‚Œã‚‹
             res == [1,-1,-1,1,-1,1,1,1,-1,-1,1,-1,1]
     }
-
 }
