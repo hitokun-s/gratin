@@ -8,5 +8,5 @@ class Neuron {
     // ó‘Ô•Ï” internal state value
     public double value = 0
 
-    double theta = 0
+    double bias = 0
 }

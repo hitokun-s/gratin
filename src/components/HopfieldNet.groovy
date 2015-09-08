@@ -36,9 +36,9 @@ class HopfieldNet {
         // 重み付け総和
         double weightedSum = weights.getFriends(neuron).sum {Neuron friend ->
             weights.get(friend, neuron) * friend.value
-        } - neuron.theta
+        } - neuron.bias
         // いわゆるsign関数
-        neuron.value = weightedSum >= neuron.theta ? 1 : -1
+        neuron.value = weightedSum >= neuron.bias ? 1 : -1
     }
 
     /**
@@ -52,7 +52,7 @@ class HopfieldNet {
             if(pair[0] == pair[1]) return 0 // 自己結合はカウントしない
             weights.get(pair[0], pair[1]) * pair[0].value * pair[1].value
         } / 2 + neurons.sum{ Neuron neuron ->
-            neuron.value * neuron.theta
+            neuron.value * neuron.bias
         }
     }
 

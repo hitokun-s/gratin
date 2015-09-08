@@ -15,7 +15,7 @@ class Relations {
                 if(!map.containsKey(pair[0])){
                     map[pair[0]] = new HashMap()
                 }
-                map[pair[0]][pair[1]] = defaultValue
+                map[pair[0]][pair[1]] = Math.random()
             }
             if(pair[0] != pair[1]){
                 combinations << pair
@@ -23,7 +23,9 @@ class Relations {
         }
     }
 
-    // 理想的には、各Relationに両端情報も持たせた方が、利用しやすいはず
+    // 理想的には、各Relationに両端情報も持たせた方が、コードがわかりやすくなるはず
+    // そのためにはRelationを数値ではなくオブジェクトにして、value, edge1, edge2 みたいなプロパティを与える必要
+    // オブジェクトとしてはあくまで、Wij ≠ Wji　ということに注意！
     public List getAll(){
         List res = []
         map.each {Object key, Map value ->
