@@ -86,4 +86,22 @@ class Util {
         int idx = rnd.nextInt(list.size())
         list[idx]
     }
+
+    // logistic function
+    public static def sigma = { double d ->
+        1 / (1 + Math.exp(- d))
+    }
+
+    /**
+     * 0,1からなる全てのパターンを配列で返す。配列の長さは、2の[unitCnt]乗になる
+     * 例：unitCnt : 3の場合
+     * [[0,0,0],[0,0,1],[0,1,0],[0,1,1],[1,0,0],[1,0,1],[1,1,0],[1,1,1]]
+     */
+    public static def List getAllPattern(int unitCnt){
+        def list = []
+        unitCnt.times{
+            list << [0,1]
+        }
+        list.combinations()
+    }
 }

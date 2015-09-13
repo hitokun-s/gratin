@@ -9,4 +9,8 @@ class Neuron {
     public double value = 0
 
     double bias = 0
+
+    // 層のメンバーになったときのインデックス
+    // TODO ugly
+    int idx
 }

@@ -23,6 +23,27 @@ class Relations {
         }
     }
 
+    /**
+     * 2集団間の連結、つまり二部グラフを作る
+     * @param list1
+     * @param list2
+     * @param defaultValue
+     */
+    public Relations(List list1, List list2, Object defaultValue = null){
+        [list1,list2].eachCombination { List pair ->
+            boolean b = pair[0].hashCode() >= pair[1].hashCode()
+            def elm1 = b ? pair[0] : pair[1]
+            def elm2 = b ? pair[1] : pair[0]
+            if(!map.containsKey(elm1)){
+                map[elm1] = new HashMap()
+            }
+            map[elm1][elm2] = Math.random() // 重みは乱数で初期化
+            if(elm1 != elm2){
+                combinations << pair
+            }
+        }
+    }
+
     // 理想的には、各Relationに両端情報も持たせた方が、コードがわかりやすくなるはず
     // そのためにはRelationを数値ではなくオブジェクトにして、value, edge1, edge2 みたいなプロパティを与える必要
     // オブジェクトとしてはあくまで、Wij ≠ Wji　ということに注意！
