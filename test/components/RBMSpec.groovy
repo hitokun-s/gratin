@@ -22,6 +22,24 @@ class RBMSpec extends Specification {
             L1 < L2
     }
 
+    // updateWeightsAndBiases()‚ÍAKLî•ñ—Ê‚ğŒ»Û‚³‚¹‚é
+    def "updateWeightsAndBiases() decrease KL divergence"(){
+        given:
+            def net = new RBM(3,2)
+            def patterns = [
+                [0,0,1],
+                [1,1,0]
+            ]
+        when:
+            def KL1 = net.getKL(patterns)
+            net.updateWeightsAndBiases(patterns[0])
+            def KL2 = net.getKL(patterns)
+            println "KL1:$KL1"
+            println "KL2:$KL2"
+        then:
+            KL1 > KL2
+    }
+
     // memorize()‚Í–Ş“x‚ğ‘‰Á‚³‚¹‚é
     def "memorize() increases likelihood"(){
         given:

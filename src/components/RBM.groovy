@@ -167,6 +167,43 @@ class RBM {
         visibleValues
     }
 
+    /**
+     * KL情報量（Kullback-Leibler Divergence）
+     * Closure渡しする抽象的なメソッドとしてUtilに切り出したい気もする
+     */
+    public double getKL(List<List<Double>> patterns){
+
+        // getlikelihood()と相当かぶっている。うまくまとめたいもの。
+
+        def allVisiblePatterns = getAllPattern(visibleNeurons.size())
+        def allHiddenPatterns = getAllPattern(hiddenNeurons.size())
+
+        // 正規化定数
+        def Z = 0
+        allVisiblePatterns.each{visiblePattern ->
+            setVisibleValues(visiblePattern)
+            allHiddenPatterns.each{hiddenPattern ->
+                setHiddenValues(hiddenPattern)
+                Z += Math.exp(- getEnergy())
+            }
+        }
+
+        // patterns内に重複はないと仮定
+        patterns.sum{ List<Integer> pattern ->
+            setVisibleValues(pattern)
+            // 付与データにおけるこのpatternの生起確率
+            def q = 1 / patterns.size()
+            // 可視素子がpatternになる確率＝ボルツマン確率を隠れ素子の全パターンで周辺化
+            def marginAboutHidden = allHiddenPatterns.sum{ List<Integer> hiddenPattern ->
+                setHiddenValues(hiddenPattern)
+                Math.exp(-getEnergy())
+            }
+            // ボルツマンマシンとしての、このpatternの生起確率
+            def p = Math.log(marginAboutHidden) / Z
+            q * (Math.log(q) - Math.log(p))
+        }
+    }
+
     public void updateVisibleValues(){
         visibleNeurons.each{Neuron n ->
             n.value = Math.random() < getConditionedProbability(n) ? 1 : 0
