@@ -1,6 +1,7 @@
 package layers
 
 import spock.lang.Specification
+import static util.Util.*
 
 class SoftmaxLayer2Spec extends Specification {
 
@@ -49,5 +50,35 @@ class SoftmaxLayer2Spec extends Specification {
         then:
             res1 == 1
             res2 == 0
+    }
+
+    def "IRIS test can predict with probability larger than 50 %"(){
+        given:
+            // TODO 超やっつけ。データ前処理を実装したらここに反映する
+            def sample = []
+            new File("data/iris.data.txt").eachLine { line ->
+                def output
+                switch(line.split(",")[-1]){
+                    case "Iris-setosa" : output = [1.0,0.0,0.0];break;
+                    case "Iris-versicolor" : output = [0.0,1.0,0.0];break;
+                    case "Iris-virginica" : output = [0.0,0.0,1.0];break;
+                    default:assert false
+                }
+                sample << [input : line.split(",")[0..-2].collect {Double.parseDouble(it) / 10}, output:output]
+            }
+            def layer = new SoftmaxLayer2(4,3)
+            layer.train(sample)
+        when:
+            int successCnt = 0
+            100.times{
+                def aSample = getRandom(sample)
+                if(aSample.output[layer.predict(aSample.input)] == 1){
+                    successCnt++
+                }
+            }
+            def p = successCnt / 100 // 的中確率
+            println p
+        then:
+            p > 0.5
     }
 }
