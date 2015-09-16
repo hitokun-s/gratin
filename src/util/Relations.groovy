@@ -94,8 +94,10 @@ class Relations {
         map.each{ Object k1, Map v1 ->
             v1.each{ k2, v2 ->
                 if(k1 == key && k2 == key) return
-                def friend =  k1 == key ? k2 : k1
-                res << friend
+                if(k1 == key || k2 == key){
+                    def friend =  k1 == key ? k2 : k1
+                    res << friend
+                }
             }
         }
         res.unique()

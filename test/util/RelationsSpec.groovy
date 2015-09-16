@@ -1,5 +1,6 @@
 package util
 
+import components.Neuron
 import spock.lang.Specification
 
 class RelationsSpec extends Specification {
@@ -48,6 +49,25 @@ class RelationsSpec extends Specification {
         List res = relations.getFriends(2)
         then:
         res == [1,3,4]
+    }
+
+    // 二部グラフの場合
+    def "getFriends for bipartite graph"(){
+        given:
+            List neurons1 = []
+            4.times{
+                neurons1 << new Neuron()
+            }
+            List neurons2 = []
+            5.times{
+                neurons2 << new Neuron()
+            }
+            assert neurons1.size() == 4
+            def relations = new Relations(neurons1, neurons2)
+        when:
+            def friends = relations.getFriends(neurons1[2]) // 適当に選んだ
+        then:
+            friends.sort() == neurons2.sort()
     }
 
 }
