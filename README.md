@@ -3,18 +3,18 @@ Gratin
 
 Machine Learning Tool in [Groovy](http://www.groovy-lang.org/)
 
-##contents
+##Contents
 
 - Hopfield Network
 - Boltzmann Machine
 - RBM (Restricted Boltzmann Machine)
 - Softmax Layer
 
-##tests
+##Tests
 
 - IRIS data
 
-##Good References
+##References
 
 ###RBM
 [http://www.cs.miyazaki-u.ac.jp/~date/lectures/neural/kadai/project140610rbm3.pdf](http://www.cs.miyazaki-u.ac.jp/~date/lectures/neural/kadai/project140610rbm3.pdf)
