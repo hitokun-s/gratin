@@ -6,7 +6,7 @@ Machine Learning Tool in [Groovy](http://www.groovy-lang.org/)
 ##Contents
 
 - Hopfield Network
-- Boltzmann Machine
+- Boltzmann Machine (simple, without hidden units, fully connected)
 - RBM (Restricted Boltzmann Machine)
 - Softmax Layer
 
