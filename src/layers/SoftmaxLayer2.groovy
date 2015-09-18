@@ -1,7 +1,7 @@
 package layers
 
 import components.Neuron
-import util.Relations
+import util.Weight
 
 import static util.Util.*
 
@@ -14,7 +14,7 @@ import static util.Util.*
 class SoftmaxLayer2 {
 
     // バイアスもないようなSoftmaxの計算にニューロンを登場させるのは、大げさすぎる？？
-    Relations weights
+    Weight w
     List<Neuron> inputs = []
     List<Neuron> outputs = []
 
@@ -25,7 +25,7 @@ class SoftmaxLayer2 {
         outCnt.times{
             outputs << new Neuron(bias : Math.random(), idx:it)
         }
-        weights = new Relations(inputs, outputs, 0)
+        w = new Weight(inputs, outputs)
     }
 
     /**
@@ -34,8 +34,8 @@ class SoftmaxLayer2 {
      */
     public double getEnergy(List<Double> data, int k){
         Neuron outN = outputs[k]
-        weights.getFriends(outN).sum{ Neuron inN ->
-            weights.get(inN, outN) * inN.value
+        inputs.sum{ Neuron inN ->
+            w[inN, outN] * inN.value
         }
     }
 
@@ -71,7 +71,7 @@ class SoftmaxLayer2 {
             (getProbability(it.input, k) - it.output[k]) * inN.value
         }
         println "gradW:$gradW"
-        weights.set(inN, outN, weights.get(inN, outN) - gradW)
+        w[inN, outN] -= gradW
         gradW
     }
 
@@ -100,7 +100,7 @@ class SoftmaxLayer2 {
         inputValues = input
         outputs.max{ Neuron outN ->
             inputs.sum{Neuron inN ->
-                weights.get(inN, outN) * inN.value
+                w[inN, outN] * inN.value
             }
         }.idx
         // maxとなる確率値＝自信度として取得してもいいかも？まあ尤度でいいか。。。
