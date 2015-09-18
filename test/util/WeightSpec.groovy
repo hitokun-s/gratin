@@ -5,7 +5,21 @@ import spock.lang.Specification
 
 class WeightSpec extends Specification {
 
-    def "constructor"(){
+    def "constructor for Fully Connected Network"(){
+        given:
+            def n1 = new Neuron(idx:1)
+            def n2 = new Neuron(idx:2)
+            def n3 = new Neuron(idx:3)
+            def n4 = new Neuron(idx:4)
+            def n5 = new Neuron(idx:5)
+        when:
+            def w = new Weight([n1,n2,n3,n4,n5])
+        then:
+            w.size() == 10 // = 5C2
+            w[n1,n3] == w[n3,n1]
+    }
+
+    def "constructor for bipartite graph"(){
         given:
             def n1 = new Neuron(idx:1)
             def n2 = new Neuron(idx:2)

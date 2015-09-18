@@ -10,9 +10,21 @@ import components.Neuron
 class Weight extends HashMap<List<Neuron>, Double>{
 
     /**
+     * 相互結合ネットワーク
+     * Fully Connected Network
+     */
+    public Weight(List<Neuron> list){
+        [list,list].eachCombination { List pair ->
+            if(pair[0] == pair[1])return // 自己結合は除外
+            if(super.get(pair) || super.get(pair.reverse())) return // 登録済ならスキップ
+            // superを使わないと、Overrideしている自身のget,put内の存在確認assertionで引っかかってしまう
+            super.put(pair, Math.random() )// 重みは乱数で初期化
+        }
+    }
+
+    /**
      * 2集団間の連結、つまり二部グラフを作る
-     * @param list1
-     * @param list2
+     * bipartite graph
      */
     public Weight(List<Neuron> list1, List<Neuron> list2){
         [list1,list2].eachCombination { List pair ->
