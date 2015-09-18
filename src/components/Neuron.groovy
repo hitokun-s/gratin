@@ -13,4 +13,9 @@ class Neuron {
     // 層のメンバーになったときのインデックス
     // TODO ugly
     int idx
+
+    @Override
+    public String toString(){
+        "Neuron:$idx"
+    }
 }
