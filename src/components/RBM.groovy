@@ -1,6 +1,8 @@
 package components
 
 import util.Relations
+import util.Weight
+
 import static util.Util.*
 
 /**
@@ -11,7 +13,7 @@ class RBM {
     List<Neuron> visibleNeurons = []
     List<Neuron> hiddenNeurons = []
 
-    Relations weights // ユニット間相互結合の重み
+    Weight w // ユニット間相互結合の重み
 
     double lr = 0.1 // 勾配上昇法の学習率
     int T = 1 // CD法での反復回数
@@ -23,7 +25,7 @@ class RBM {
         hiddenUnitCnt.times{
             hiddenNeurons << new Neuron(bias : Math.random(), idx:it)
         }
-        weights = new Relations(visibleNeurons, hiddenNeurons, 0)
+        w = new Weight(visibleNeurons, hiddenNeurons)
     }
 
     /**
@@ -55,7 +57,7 @@ class RBM {
             Neuron h = pair[1]
             def gradW = lr * (v0[v.idx] * p0[h.idx] - vT[v.idx] * pT[h.idx])
             weightGrads << gradW
-            weights.set(v, h, weights.get(v, h) + gradW)
+            w[v, h] += gradW
         }
 
         visibleNeurons.each {
@@ -98,7 +100,7 @@ class RBM {
         def partners = visibleNeurons.contains(n) ? hiddenNeurons : visibleNeurons
         // TODO 惰性で命名してしまった。ほんとにエネルギー変化分になるかは要検証
         double energyDiff = n.bias + partners.sum{Neuron p ->
-            weights.get(n,p) * p.value
+            w[n,p] * p.value
         }
         // ロジスティック関数
         sigma(energyDiff)
@@ -111,7 +113,7 @@ class RBM {
             n.bias * n.value
         } - [visibleNeurons, hiddenNeurons].combinations().sum{List<Neuron> pair ->
             if(pair[0] == pair[1])return 0
-            weights.get(pair[0], pair[1]) * pair[0].value * pair[1].value
+            w[pair[0], pair[1]] * pair[0].value * pair[1].value
         }
     }
 
