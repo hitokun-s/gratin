@@ -1,6 +1,5 @@
 package components
 
-import util.Relations
 import util.Weight
 
 import static util.Util.*
@@ -18,12 +17,12 @@ class RBM {
     double lr = 0.1 // 勾配上昇法の学習率
     int T = 1 // CD法での反復回数
 
-    public RBM(int visibleUnitCnt, int hiddenUnitCnt){
-        visibleUnitCnt.times{
-            visibleNeurons << new Neuron(bias : Math.random(), idx:it)
+    public RBM(int visibleUnitCnt, int hiddenUnitCnt) {
+        visibleUnitCnt.times {
+            visibleNeurons << new Neuron(bias: Math.random(), idx: it)
         }
-        hiddenUnitCnt.times{
-            hiddenNeurons << new Neuron(bias : Math.random(), idx:it)
+        hiddenUnitCnt.times {
+            hiddenNeurons << new Neuron(bias: Math.random(), idx: it)
         }
         w = new Weight(visibleNeurons, hiddenNeurons)
     }
@@ -61,7 +60,7 @@ class RBM {
         }
 
         visibleNeurons.each {
-            def biasGrad= lr * (v0[it.idx] - vT[it.idx])
+            def biasGrad = lr * (v0[it.idx] - vT[it.idx])
             biasGrads << biasGrad
             it.bias += biasGrad
         }
@@ -70,23 +69,25 @@ class RBM {
             biasGrads << biasGrad
             it.bias += biasGrad
         }
-        [weightsGrads : weightGrads, biasGrads : biasGrads]
+        [weightsGrads: weightGrads, biasGrads: biasGrads]
     }
 
     /**
      * 与えられた全サンプルデータについて、CD法により尤度を最大化する
      */
-    def memorize(List<List<Double>> patterns){
+    def memorize(List<List<Double>> patterns) {
         def TH = 0.00001
         boolean shouldContinue = true
 
         // 全ての勾配が閾値以下になるまで、サンプルデータを巡回して重みとバイアスを更新する
-        while(shouldContinue){
+        while (shouldContinue) {
             println "Let's go to update cycle!"
-            patterns.each{ List<Double> pattern ->
+            patterns.each { List<Double> pattern ->
                 def grads = updateWeightsAndBiases(pattern)
                 println grads
-                shouldContinue = grads.weightGrads.findAll{Math.abs(it) > TH}.size() > 0 || grads.biasGrads.findAll{Math.abs(it) > TH}.size() > 0
+                shouldContinue = grads.weightGrads.findAll { Math.abs(it) > TH }.size() > 0 || grads.biasGrads.findAll {
+                    Math.abs(it) > TH
+                }.size() > 0
             }
         }
     }
@@ -96,23 +97,23 @@ class RBM {
      * 可視層が与えられたときの、ある隠れ素子の（値＝１の）条件付確率を返す
      * RBMの性質上、これらは完全に対称なので１メソッドにまとめた。
      */
-    def getConditionedProbability(Neuron n){
+    def getConditionedProbability(Neuron n) {
         def partners = visibleNeurons.contains(n) ? hiddenNeurons : visibleNeurons
         // TODO 惰性で命名してしまった。ほんとにエネルギー変化分になるかは要検証
-        double energyDiff = n.bias + partners.sum{Neuron p ->
-            w[n,p] * p.value
+        double energyDiff = n.bias + partners.sum { Neuron p ->
+            w[n, p] * p.value
         }
         // ロジスティック関数
         sigma(energyDiff)
     }
 
-    public double getEnergy(List<Double> pattern){
-        - visibleNeurons.sum{ Neuron n ->
+    public double getEnergy(List<Double> pattern) {
+        -visibleNeurons.sum { Neuron n ->
             n.bias * n.value
-        } - hiddenNeurons.sum{ Neuron n ->
+        } - hiddenNeurons.sum { Neuron n ->
             n.bias * n.value
-        } - [visibleNeurons, hiddenNeurons].combinations().sum{List<Neuron> pair ->
-            if(pair[0] == pair[1])return 0
+        } - [visibleNeurons, hiddenNeurons].combinations().sum { List<Neuron> pair ->
+            if (pair[0] == pair[1]) return 0
             w[pair[0], pair[1]] * pair[0].value * pair[1].value
         }
     }
@@ -122,26 +123,26 @@ class RBM {
      * 勾配上昇法で重みやバイアスを更新すれば、対数尤度は増加するはず
      * 動作チェックやテストに使う
      */
-    public double getLikelihood(List<List<Integer>> patterns){
+    public double getLikelihood(List<List<Integer>> patterns) {
 
         def allVisiblePatterns = getAllPattern(visibleNeurons.size())
         def allHiddenPatterns = getAllPattern(hiddenNeurons.size())
 
         // 正規化定数
         def Z = 0
-        allVisiblePatterns.each{visiblePattern ->
+        allVisiblePatterns.each { visiblePattern ->
             setVisibleValues(visiblePattern)
-            allHiddenPatterns.each{hiddenPattern ->
+            allHiddenPatterns.each { hiddenPattern ->
                 setHiddenValues(hiddenPattern)
-                Z += Math.exp(- getEnergy())
+                Z += Math.exp(-getEnergy())
             }
         }
 
         // 「v,hについてのボルツマン確率分布をhで周辺化（積算）したもの」の対数を、各サンプル毎に計算して和を取れば良い
         // のだが、ちょっと計算順序を変えている
-        patterns.sum{ List<Integer> pattern ->
+        patterns.sum { List<Integer> pattern ->
             setVisibleValues(pattern)
-            def marginAboutHidden = allHiddenPatterns.sum{ List<Integer> hiddenPattern ->
+            def marginAboutHidden = allHiddenPatterns.sum { List<Integer> hiddenPattern ->
                 setHiddenValues(hiddenPattern)
                 Math.exp(-getEnergy())
             }
@@ -149,21 +150,21 @@ class RBM {
         } - patterns.size() * Z
     }
 
-    public List<Double> recall(List<Double> pattern){
+    public List<Double> recall(List<Double> pattern) {
         setVisibleValues(pattern)
-        hiddenNeurons.each{Neuron n ->
+        hiddenNeurons.each { Neuron n ->
             n.value = getConditionedProbability(n) >= 0.5 ? 1 : 0
         }
         def allNeurons = visibleNeurons + hiddenNeurons
 
         boolean isChanged = true
-        while(isChanged){
+        while (isChanged) {
             isChanged = false
-            (allNeurons.size() * 20).times{
+            (allNeurons.size() * 20).times {
                 Neuron n = getRandom(allNeurons)
                 def tmp = n.value
                 n.value = getConditionedProbability(n) >= 0.5 ? 1 : 0
-                if(tmp != n.value)isChanged = true
+                if (tmp != n.value) isChanged = true
             }
         }
         visibleValues
@@ -173,7 +174,7 @@ class RBM {
      * KL情報量（Kullback-Leibler Divergence）
      * Closure渡しする抽象的なメソッドとしてUtilに切り出したい気もする
      */
-    public double getKL(List<List<Double>> patterns){
+    public double getKL(List<List<Double>> patterns) {
 
         // getlikelihood()と相当かぶっている。うまくまとめたいもの。
 
@@ -182,21 +183,21 @@ class RBM {
 
         // 正規化定数
         def Z = 0
-        allVisiblePatterns.each{visiblePattern ->
+        allVisiblePatterns.each { visiblePattern ->
             setVisibleValues(visiblePattern)
-            allHiddenPatterns.each{hiddenPattern ->
+            allHiddenPatterns.each { hiddenPattern ->
                 setHiddenValues(hiddenPattern)
-                Z += Math.exp(- getEnergy())
+                Z += Math.exp(-getEnergy())
             }
         }
 
         // patterns内に重複はないと仮定
-        patterns.sum{ List<Integer> pattern ->
+        patterns.sum { List<Integer> pattern ->
             setVisibleValues(pattern)
             // 付与データにおけるこのpatternの生起確率
             def q = 1 / patterns.size()
             // 可視素子がpatternになる確率＝ボルツマン確率を隠れ素子の全パターンで周辺化
-            def marginAboutHidden = allHiddenPatterns.sum{ List<Integer> hiddenPattern ->
+            def marginAboutHidden = allHiddenPatterns.sum { List<Integer> hiddenPattern ->
                 setHiddenValues(hiddenPattern)
                 Math.exp(-getEnergy())
             }
@@ -206,35 +207,35 @@ class RBM {
         }
     }
 
-    public void updateVisibleValues(){
-        visibleNeurons.each{Neuron n ->
+    public void updateVisibleValues() {
+        visibleNeurons.each { Neuron n ->
             n.value = Math.random() < getConditionedProbability(n) ? 1 : 0
         }
     }
 
-    public void updateHiddenValues(){
-        hiddenNeurons.each{Neuron n ->
+    public void updateHiddenValues() {
+        hiddenNeurons.each { Neuron n ->
             n.value = Math.random() < getConditionedProbability(n) ? 1 : 0
         }
     }
 
-    public void setVisibleValues(List<Double> values){
-        visibleNeurons.eachWithIndex{n,i ->
+    public void setVisibleValues(List<Double> values) {
+        visibleNeurons.eachWithIndex { n, i ->
             n.value = values[i]
         }
     }
 
-    public void setHiddenValues(List<Double> values){
-        hiddenNeurons.eachWithIndex{n,i ->
+    public void setHiddenValues(List<Double> values) {
+        hiddenNeurons.eachWithIndex { n, i ->
             n.value = values[i]
         }
     }
 
-    public double[] getVisibleValues(){
+    public double[] getVisibleValues() {
         visibleNeurons*.value as double[]
     }
 
-    public double[] getHiddenValues(){
+    public double[] getHiddenValues() {
         hiddenNeurons*.value as double[]
     }
 }
