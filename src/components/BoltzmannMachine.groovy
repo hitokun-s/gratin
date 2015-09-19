@@ -1,6 +1,6 @@
 package components
 
-import util.Relations
+import util.Weight
 
 /**
  * ボルツマンマシン
@@ -8,22 +8,22 @@ import util.Relations
 class BoltzmannMachine {
 
     List<Neuron> neurons = [] // ユニットの出力値は、{0,1}
-    Relations weights // ユニット間相互結合の重み
+    Weight w // ユニット間相互結合の重み
 
     double T = 5 // 温度
 
-    public BoltzmannMachine(int unitCnt){
-        unitCnt.times{
-            neurons << new Neuron(bias : Math.random())
+    public BoltzmannMachine(int unitCnt) {
+        unitCnt.times {
+            neurons << new Neuron(bias: Math.random())
         }
-        weights = new Relations(neurons, 0)
+        w = new Weight(neurons)
     }
 
     /**
      * 経験分布の平均値と、gibbsSampling値から計算した真の分布の期待値を用いて、
      * 勾配降下法における、重みとバイアスの勾配を計算し、両者を更新する
      */
-    def updateWeights(){
+    def updateWeights() {
 
     }
 
@@ -31,19 +31,19 @@ class BoltzmannMachine {
     // エネルギーがこの公式で計算されるという前提で、条件付き確率（遷移確率）の公式が導出される
     // 遷移によって減少する（もしくは維持される）はずなので、
     // 遷移を繰り返して定常分布になったかどうかの判定や、アルゴリズムが正しいかのテストに使えるはず
-    public double getEnergy(List<Double> pattern){
+    public double getEnergy(List<Double> pattern) {
         def tmpValues // 現在値を保存
-        if(pattern){
+        if (pattern) {
             tmpValues = getValues()
             setValues(pattern)
         }
-        def res = - [neurons, neurons].combinations().sum{ List<Neuron> pair ->
-            if(pair[0] == pair[1]) return 0 // 自己結合はカウントしない
-            weights.get(pair[0], pair[1]) * pair[0].value * pair[1].value
-        }  - neurons.sum{ Neuron neuron ->
+        def res = -w.pairs().sum { List<Neuron> pair ->
+            if (pair[0] == pair[1]) return 0 // 自己結合はカウントしない
+            w[pair] * pair[0].value * pair[1].value
+        } - neurons.sum { Neuron neuron ->
             neuron.value * neuron.bias
         }
-        if(pattern){
+        if (pattern) {
             setValues(tmpValues as List<Double>) // 現在値を元に戻しておく
         }
         res
@@ -54,10 +54,10 @@ class BoltzmannMachine {
      * すなわち「[0,1]で生成した乱数 < 遷移確率（条件付き確率）」なら更新する
      * ギブスサンプリングでも、記憶の想起でも使われる
      */
-    public void update(Neuron target){
+    public void update(Neuron target) {
         // 対称ニューロンの値が0→1に変化したときのエネルギー変化量
-        double energyDiff = weights.getFriends(target).sum{Neuron friend ->
-            weights.get(target, friend) * friend.value
+        double energyDiff = neurons.sum { Neuron n ->
+            w[target, n] * n.value
         } + target.bias
         double p = 1 / (1 + Math.exp(-energyDiff / T)) // 出力値が１である条件付き確率＝遷移確率
         target.value = Math.random() < p ? 1 : 0
@@ -71,7 +71,7 @@ class BoltzmannMachine {
      * ボルツマンマシン自体の本質というわけではない
      * ユニット数が非常に小さければ、期待値をまともに計算することもできる
      */
-    def gibbsSampling(){
+    def gibbsSampling() {
 
     }
 
@@ -88,12 +88,12 @@ class BoltzmannMachine {
         def gradsB = [false]
         // すべての重みの勾配の絶対値 < 0.01 になるまで続行する
         def cycle = 1
-        while (grads.findAll{it == false}.size() > 0 || gradsB.findAll{it == false}.size() > 1) {
+        while (grads.findAll { it == false }.size() > 0 || gradsB.findAll { it == false }.size() > 1) {
             println "weights update cycle:$cycle"
             cycle++
             grads = []
             gradsB = []
-            weights.combinations.each { List<Neuron> pair ->
+            w.pairs().each { List<Neuron> pair ->
 
                 def sampleAverage = patterns.sum { List<Integer> pattern ->
                     setValues(pattern)
@@ -114,13 +114,12 @@ class BoltzmannMachine {
                 def gradW = sampleAverage - originalE
 
                 // 重みを更新
-                // TODO too ugly, you must die
-                weights.set(pair[0], pair[1], weights.get(pair[0], pair[1]) + gradW)
+                w[pair] += gradW
 
                 grads << (Math.abs(gradW) < 0.01)
             }
             // bias
-            neurons.each{ neuron ->
+            neurons.each { neuron ->
                 def sampleAverage = patterns.sum { List<Integer> pattern ->
                     setValues(pattern)
                     neuron.value
@@ -147,7 +146,7 @@ class BoltzmannMachine {
 
     // 引数のデータが、現在のボルツマンマシンによって作成された対数尤度を返す
     // 勾配上昇法で重みやバイアスを更新すれば、対数尤度は増加するはず
-    public double getLikelihood(List<List<Integer>> patterns){
+    public double getLikelihood(List<List<Integer>> patterns) {
         def allPattern = getAllPattern(patterns[0].size())
 
         def lnZtheta = Math.log(allPattern.sum { List<Integer> pattern ->
@@ -156,7 +155,7 @@ class BoltzmannMachine {
         })
 
         patterns.sum { List<Integer> pattern ->
-            - getEnergy(pattern) - lnZtheta
+            -getEnergy(pattern) - lnZtheta
         }
     }
 
@@ -168,19 +167,19 @@ class BoltzmannMachine {
      * もし初期値が、経験データにノイズを加えたものであれば、経験データが復元されるはず
      * Simulated Annealing で実行する
      */
-    def recall(List<Double> pattern){
+    def recall(List<Double> pattern) {
         setValues(pattern)
         T = 3
         double af = 0.95 // annealing factor
         def mfp
 
-        while(T > 0.2) {
+        while (T > 0.2) {
             def observedMap = [:]
             10000.times {
                 neurons.each { n ->
                     update(n)
                 }
-                if(it % 20 == 0){
+                if (it % 20 == 0) {
                     observedMap[values] = observedMap[values] ? observedMap[values] + 1 : 1
                 }
             }
@@ -188,26 +187,26 @@ class BoltzmannMachine {
             T *= af
             println "Temprature is set to:$T"
             // このサイクル内での最頻パターン（Most Frequent Pattern）
-            mfp = observedMap.max{it.value}.key
+            mfp = observedMap.max { it.value }.key
             println "most frequent pattern:$mfp"
         }
         mfp
     }
 
-    public void setValues(List<Double> values){
-        neurons.eachWithIndex{n,i ->
+    public void setValues(List<Double> values) {
+        neurons.eachWithIndex { n, i ->
             n.value = values[i]
         }
     }
 
-    public double[] getValues(){
+    public double[] getValues() {
         neurons*.value as double[]
     }
 
-    private List getAllPattern(int unitCnt){
+    private List getAllPattern(int unitCnt) {
         def list = []
-        unitCnt.times{
-            list << [0,1]
+        unitCnt.times {
+            list << [0, 1]
         }
         list.combinations()
     }
