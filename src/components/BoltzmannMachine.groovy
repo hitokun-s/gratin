@@ -1,6 +1,7 @@
 package components
 
 import util.Weight
+import static util.Util.*
 
 /**
  * ボルツマンマシン
@@ -37,7 +38,7 @@ class BoltzmannMachine {
             tmpValues = getValues()
             setValues(pattern)
         }
-        def res = -w.pairs().sum { List<Neuron> pair ->
+        def res = -pairs(neurons, true).sum { List<Neuron> pair ->
             if (pair[0] == pair[1]) return 0 // 自己結合はカウントしない
             w[pair] * pair[0].value * pair[1].value
         } - neurons.sum { Neuron neuron ->
@@ -201,14 +202,6 @@ class BoltzmannMachine {
 
     public double[] getValues() {
         neurons*.value as double[]
-    }
-
-    private List getAllPattern(int unitCnt) {
-        def list = []
-        unitCnt.times {
-            list << [0, 1]
-        }
-        list.combinations()
     }
 
 }
