@@ -1,8 +1,9 @@
 package components
 
-import util.Relations
+import util.Weight
 
-import static util.Util.*
+import static util.Util.getRandom
+import static util.Util.pairs
 
 // TODO とりあえず書いてみる。あとで整理する。ネットワークのタイプごとにまとめなおす。
 /**
@@ -13,29 +14,28 @@ import static util.Util.*
 class HopfieldNet {
 
     List<Neuron> neurons = [] // ユニットの状態は、{+1, -1}
-    Relations weights // ユニット間相互結合の重み
+    Weight w // ユニット間相互結合の重み
 
     // この回数だけupdateしてもエネルギー関数が減少しなければ、極小値と判定する
     // TODO 理論的に決定する方法を調べてコンストラクタに実装
     int recallThreshHold = 100
 
     public HopfieldNet(int unitCnt) {
-        unitCnt.times{
-            neurons << new Neuron()
+        unitCnt.times {
+            neurons << new Neuron(idx: it)
         }
-        weights = new Relations(neurons, 0)
+        w = new Weight(neurons)
     }
 
     /**
      * 非同期更新：ランダムに選んだ１ユニットのみを更新する
      * TODO 同期更新（全ユニットをまとめて更新）も実装しておくべき？
      */
-    public void update(){
+    public void update() {
         Neuron neuron = getRandom(neurons)
-        // TODO ugly code
         // 重み付け総和
-        double weightedSum = weights.getFriends(neuron).sum {Neuron friend ->
-            weights.get(friend, neuron) * friend.value
+        double weightedSum = neurons.sum { Neuron n ->
+            w[n, neuron] * n.value
         } - neuron.bias
         // いわゆるsign関数
         neuron.value = weightedSum >= neuron.bias ? 1 : -1
@@ -47,11 +47,11 @@ class HopfieldNet {
      * そうしないとエネルギー関数が単調減少にならない
      * @return
      */
-    public double getEnergy(){
-        - [neurons, neurons].combinations().sum{ List<Neuron> pair ->
-            if(pair[0] == pair[1]) return 0 // 自己結合はカウントしない
-            weights.get(pair[0], pair[1]) * pair[0].value * pair[1].value
-        } / 2 + neurons.sum{ Neuron neuron ->
+    public double getEnergy() {
+        -pairs(neurons, true).sum { List<Neuron> pair ->
+            if (pair[0] == pair[1]) return 0 // 自己結合はカウントしない
+            w[pair] * pair[0].value * pair[1].value
+        } / 2 + neurons.sum { Neuron neuron ->
             neuron.value * neuron.bias
         }
     }
@@ -59,12 +59,11 @@ class HopfieldNet {
     /**
      * （複数の）パターンを記憶させる。具体的には重みを設定する
      */
-    public void memorize(List<List<Integer>> patterns){
-        patterns.each{List<Integer> pattern ->
+    public void memorize(List<List<Integer>> patterns) {
+        patterns.each { List<Integer> pattern ->
             setValues(pattern)
-            weights.combinations.each{ List<Neuron> pair ->
-                // TODO too ugly, you must die
-                weights.set(pair[0], pair[1], weights.get(pair[0], pair[1]) + pair[0].value * pair[1].value)
+            pairs(neurons, true).each { List<Neuron> pair ->
+                w[pair] += pair[0].value * pair[1].value
             }
         }
     }
@@ -73,13 +72,13 @@ class HopfieldNet {
      * テストでも便利なはず
      * @param values
      */
-    public void setValues(List<Double> values){
-        neurons.eachWithIndex{n,i ->
+    public void setValues(List<Double> values) {
+        neurons.eachWithIndex { n, i ->
             n.value = values[i]
         }
     }
 
-    public double[] getValues(){
+    public double[] getValues() {
         neurons*.value as double[]
     }
 
@@ -87,18 +86,18 @@ class HopfieldNet {
      * 想起する
      * @return
      */
-    public int[] recall(List<Double> input){
+    public int[] recall(List<Double> input) {
         setValues(input)
-        double prevE,currE
+        double prevE, currE
         int keepCnt = 0 // エネルギーが変化しなかった回数
-        while(keepCnt < recallThreshHold){
+        while (keepCnt < recallThreshHold) {
             prevE = getEnergy()
             update()
             currE = getEnergy()
             assert currE <= prevE // 減少しないとおかしい
-            if(currE == prevE){
+            if (currE == prevE) {
                 keepCnt++
-            }else{
+            } else {
                 keepCnt = 0
             }
         }
