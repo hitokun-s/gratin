@@ -1,5 +1,7 @@
 package util
 
+import components.Neuron
+
 class Util {
     // Array utilities
     public static def zeros = { n ->
@@ -103,5 +105,15 @@ class Util {
             list << [0,1]
         }
         list.combinations()
+    }
+
+    public static def List<List<Neuron>> pairs(List<Neuron> neurons, Boolean bidirectional = false){
+        def res = [neurons, neurons].combinations()
+        if(!bidirectional){
+            res.unique{List<Neuron> list ->
+                list.sort()
+            }
+        }
+        res
     }
 }
