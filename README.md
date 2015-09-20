@@ -1,7 +1,8 @@
 Gratin
 ===
 
-Machine Learning Tool in [Groovy](http://www.groovy-lang.org/)
+Machine Learning Tool in [Groovy](http://www.groovy-lang.org/)  
+Deep learning will be covered in near future. 
 
 ##Contents
 
