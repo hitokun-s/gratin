@@ -19,7 +19,6 @@ Deep learning will be covered in near future.
 
 - IRIS data
 
-##References
+##Thanks
 
-###RBM
-[http://www.cs.miyazaki-u.ac.jp/~date/lectures/neural/kadai/project140610rbm3.pdf](http://www.cs.miyazaki-u.ac.jp/~date/lectures/neural/kadai/project140610rbm3.pdf)
+- [http://rosettacode.org/wiki/Dot_product#Groovy](http://rosettacode.org/wiki/Dot_product#Groovy)
