@@ -3,11 +3,11 @@ package layers
 import spock.lang.Specification
 import static util.Util.*
 
-class SoftmaxLayer2Spec extends Specification {
+class SoftmaxLayerSpec extends Specification {
 
     def "updateWeights decrease negative log likelihood"(){
         given:
-            def layer = new SoftmaxLayer2(4,2)
+            def layer = new SoftmaxLayer(4,2)
             def sample = [
                     [input:[0.2,0.2,0.3,0.3], output:[0,1]]
             ]
@@ -24,7 +24,7 @@ class SoftmaxLayer2Spec extends Specification {
 
     def "train decrease negative log likelihood"(){
         given:
-            def layer = new SoftmaxLayer2(4,2)
+            def layer = new SoftmaxLayer(4,2)
             def sample = [
                 [input:[0.2,0.2,0.3,0.3], output:[0,1]]
             ]
@@ -38,7 +38,7 @@ class SoftmaxLayer2Spec extends Specification {
 
     def "predict"(){
         given:
-        def layer = new SoftmaxLayer2(4,2)
+        def layer = new SoftmaxLayer(4,2)
         def sample = [
                 [input:[0.1,0.2,0.3,0.4], output:[0,1]], // 上昇サンプルはクラス1
                 [input:[0.4,0.3,0.2,0.1], output:[1,0]]  // 下降サンプルはクラス2
@@ -66,7 +66,7 @@ class SoftmaxLayer2Spec extends Specification {
                 }
                 sample << [input : line.split(",")[0..-2].collect {Double.parseDouble(it) / 10}, output:output]
             }
-            def layer = new SoftmaxLayer2(4,3)
+            def layer = new SoftmaxLayer(4,3)
             layer.train(sample)
         when:
             int successCnt = 0

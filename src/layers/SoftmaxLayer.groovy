@@ -6,19 +6,20 @@ import util.Weight
 import static util.Util.*
 
 /**
+ * SoftMax Layer
  * FullyConnectedLayerと分離する実装の方が望ましいかもしれないが、
  * ここではわかりやすさのために一体型で実装しておく
  * 分離型と一体型を両者を実装してみて比べることで、より良い設計が見えてくるかもしれない
  * TODO そのへん整理できたら名前変えよう
  */
-class SoftmaxLayer2 {
+class SoftmaxLayer {
 
     // バイアスもないようなSoftmaxの計算にニューロンを登場させるのは、大げさすぎる？？
     Weight w
     List<Neuron> inputs = []
     List<Neuron> outputs = []
 
-    public SoftmaxLayer2(int inCnt, int outCnt) {
+    public SoftmaxLayer(int inCnt, int outCnt) {
         inCnt.times {
             inputs << new Neuron(bias: Math.random(), idx: it)
         }
