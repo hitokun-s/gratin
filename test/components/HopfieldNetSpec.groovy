@@ -2,6 +2,9 @@ package components
 
 import spock.lang.Specification
 
+/**
+ * @author Hitoshi Wada
+ */
 class HopfieldNetSpec extends Specification{
 
     def "update"(){

@@ -2,6 +2,9 @@ package components
 
 import spock.lang.Specification
 
+/**
+ * @author Hitoshi Wada
+ */
 class RBMSpec extends Specification {
 
     // updateWeightsAndBiases()‚Í–Ş“x‚ğ‘‰Á‚³‚¹‚é

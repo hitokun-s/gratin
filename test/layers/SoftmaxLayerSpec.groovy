@@ -3,6 +3,9 @@ package layers
 import spock.lang.Specification
 import static util.Util.*
 
+/**
+ * @author Hitoshi Wada
+ */
 class SoftmaxLayerSpec extends Specification {
 
     def "updateWeights decrease negative log likelihood"(){

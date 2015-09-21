@@ -6,6 +6,8 @@ import static util.Util.*
 
 /**
  * Restricted Boltzmann Machine
+ *
+ * @author Hitoshi Wada
  */
 class RBM {
 

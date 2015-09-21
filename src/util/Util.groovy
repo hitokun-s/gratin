@@ -2,6 +2,9 @@ package util
 
 import components.Neuron
 
+/**
+ * @author Hitoshi Wada
+ */
 class Util {
     // Array utilities
     public static def zeros = { n ->

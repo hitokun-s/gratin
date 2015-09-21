@@ -1,5 +1,10 @@
 package util
 
+/**
+ * refs : http://www.lifewithpython.com/2014/11/python-use-matrix-operations.html
+ *
+ * @author Hitoshi Wada
+ */
 class Matrix extends ArrayList<ArrayList> {
 
     public Matrix(int row, int col) {
@@ -33,6 +38,11 @@ class Matrix extends ArrayList<ArrayList> {
         res
     }
 
+    /**
+     * 行列の積（dot product）を「*」にするか「dot」か、悩ましいところ。
+     * numpyでは、「dot」を採用し、「*」は要素同士の積演算に当てている。
+     * refs : http://www.lifewithpython.com/2014/11/python-use-matrix-operations.html
+     */
     Matrix multiply(Matrix m) {
         // check condition for multiply
         assert this.colCount == m.rowCount
@@ -45,12 +55,13 @@ class Matrix extends ArrayList<ArrayList> {
         res
     }
 
-    // ideal access way must be row[i] ...
+    // Matrix[i] is enough ? Is this not necessary?
     List row(int i) {
         this[i]
     }
 
     // ideal access way must be col[i] ...
+    // or more ideally, Matrix[:][i] or Matrix[:,i] is preferable as numpy do. but impossible in Groovy...
     List col(int i) {
         this.collect { it[i] }
     }

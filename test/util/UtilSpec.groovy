@@ -3,6 +3,9 @@ package util
 import components.Neuron
 import spock.lang.Specification
 
+/**
+ * @author Hitoshi Wada
+ */
 class UtilSpec extends Specification {
 
     def "pairs"() {

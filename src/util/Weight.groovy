@@ -11,6 +11,8 @@ import components.Neuron
  *
  * 相互結合ネットワークの場合は、自己結合も重み0で作成するようにした
  * その方が、あるニューロン周りの結合を巡回して計算する実装がシンプルになるため。
+ *
+ * @author Hitoshi Wada
  */
 class Weight extends HashMap<List<Neuron>, Double>{
 

@@ -20,6 +20,8 @@ import components.Neuron
  * Weight2[a][b] = 0.3 という処理がエラーにならずに通ってしまう。
  * ドロップアウトのように、動的に結合が生滅することを考えると、それは自然な形であるし、
  * 利用する側のソースで、想定外の結合ができないように注意すれば済む話、ではある。
+ *
+ * @author Hitoshi Wada
  */
 class Weight2 extends HashMap<Neuron, HashMap<Neuron, Double>>{
 

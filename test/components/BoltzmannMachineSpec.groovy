@@ -4,6 +4,9 @@ import spock.lang.Specification
 import util.Relations
 import static util.Util.*
 
+/**
+ * @author Hitoshi Wada
+ */
 class BoltzmannMachineSpec extends Specification {
 
     def "updateはボルツマン分布に近づける"(){

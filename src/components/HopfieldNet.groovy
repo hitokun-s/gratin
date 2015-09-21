@@ -10,6 +10,8 @@ import static util.Util.pairs
  * Hopfield Network
  * 連想記憶ができるまで実装。deep learningのBolzmann machineの基礎という意味では自己相関記憶が重要？
  * 参考：http://ipr20.cs.ehime-u.ac.jp/~kinoshita/exp3/pdf_file/neuro2.pdf
+ *
+ * @author Hitoshi Wada
  */
 class HopfieldNet {
 

@@ -2,6 +2,9 @@ package util
 
 import spock.lang.Specification
 
+/**
+ * @author Hitoshi Wada
+ */
 class MatrixSpec extends Specification {
 
     def "constructor by row and col"() {

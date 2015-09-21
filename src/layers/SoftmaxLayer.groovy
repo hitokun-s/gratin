@@ -11,6 +11,8 @@ import static util.Util.*
  * ‚±‚±‚Å‚Í‚í‚©‚è‚â‚·‚³‚Ì‚½‚ß‚Éˆê‘ÌŒ^‚ÅŽÀ‘•‚µ‚Ä‚¨‚­
  * •ª—£Œ^‚Æˆê‘ÌŒ^‚ð—¼ŽÒ‚ðŽÀ‘•‚µ‚Ä‚Ý‚Ä”ä‚×‚é‚±‚Æ‚ÅA‚æ‚è—Ç‚¢ÝŒv‚ªŒ©‚¦‚Ä‚­‚é‚©‚à‚µ‚ê‚È‚¢
  * TODO ‚»‚Ì‚Ö‚ñ®—‚Å‚«‚½‚ç–¼‘O•Ï‚¦‚æ‚¤
+ *
+ * @author Hitoshi Wada
  */
 class SoftmaxLayer {
 

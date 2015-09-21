@@ -3,6 +3,9 @@ package util
 import components.Neuron
 import spock.lang.Specification
 
+/**
+ * @author Hitoshi Wada
+ */
 class WeightSpec extends Specification {
 
     def "constructor for Fully Connected Network"() {

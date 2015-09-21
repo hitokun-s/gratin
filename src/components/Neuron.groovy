@@ -2,6 +2,8 @@ package components
 
 /**
  * Unit‚Å‚àAŒÄ‚Ñ–¼‚Í‰½‚Å‚à‚¢‚¢
+ *
+ * @author Hitoshi Wada
  */
 class Neuron {
 

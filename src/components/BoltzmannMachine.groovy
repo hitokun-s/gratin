@@ -5,6 +5,8 @@ import static util.Util.*
 
 /**
  * ボルツマンマシン
+ *
+ * @author Hitoshi Wada
  */
 class BoltzmannMachine {
 
