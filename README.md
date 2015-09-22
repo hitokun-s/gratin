@@ -10,6 +10,8 @@ Deep learning will be covered in near future.
 - Boltzmann Machine (simple, without hidden units, fully connected)
 - RBM (Restricted Boltzmann Machine)
 - Softmax Layer
+- Fully Connected Layer
+- Sigmoid Layer
 
 ##Utilities
 
