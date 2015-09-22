@@ -30,4 +30,14 @@ class FullyConnLayer extends Layer {
             }
         }
     }
+
+    @Override
+    public void updateWeights() {
+        inputs.each { Neuron inN ->
+            outputs.each { outN ->
+                def gradW = outN.delta * inN.value
+                w[inN,outN] -= gradW
+            }
+        }
+    }
 }
