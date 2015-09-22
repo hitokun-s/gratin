@@ -99,7 +99,7 @@ class Util {
 
     // derived function of sigma
     public static double sigmad(double d){
-        sigma(d)(1 - sigma(d))
+         sigma(d) * (1 - sigma(d))
     }
 
     /**
@@ -126,6 +126,7 @@ class Util {
     }
 
     public static def List<Neuron> neurons(int cnt){
+        // TODO ugly?
         (0..cnt-1).collect{
             new Neuron(idx:it)
         }
