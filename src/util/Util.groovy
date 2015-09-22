@@ -93,8 +93,13 @@ class Util {
     }
 
     // logistic function
-    public static def sigma = { double d ->
+    public static double sigma(double d){
         1 / (1 + Math.exp(- d))
+    }
+
+    // derived function of sigma
+    public static double sigmad(double d){
+        sigma(d)(1 - sigma(d))
     }
 
     /**
@@ -118,5 +123,11 @@ class Util {
             }
         }
         res
+    }
+
+    public static def List<Neuron> neurons(int cnt){
+        (0..cnt-1).collect{
+            new Neuron(idx:it)
+        }
     }
 }

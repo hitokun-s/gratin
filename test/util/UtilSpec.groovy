@@ -23,4 +23,16 @@ class UtilSpec extends Specification {
             pairs1.size() == 15 // 5C2 + 5
             pairs2.size() == 25 // 5 * 5
     }
+
+    def "neurons"() {
+        when:
+            def res = Util.neurons(5)
+        then:
+            res.size() == 5
+            res[0].idx == 0
+            res[1].idx == 1
+            res[2].idx == 2
+            res[3].idx == 3
+            res[4].idx == 4
+    }
 }
