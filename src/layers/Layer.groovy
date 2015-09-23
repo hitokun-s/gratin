@@ -1,6 +1,7 @@
 package layers
 
 import components.Neuron
+import util.Weight
 
 /**
  * Layerの責務（順伝播）：
@@ -25,6 +26,9 @@ abstract class Layer {
 
     List<Double> teacher // only used by output layer
 
+    Weight w // Some Layer(ex. SigmoidLayer, SoftmaxLayer) does not use weight.
+    Weight wd // weight gradient TODO A little bit Confusing. Weight class shold be renamed.
+
     public Layer(List<Neuron> inputs, List<Neuron> outputs) {
         this.inputs = inputs
         this.outputs = outputs
@@ -34,15 +38,17 @@ abstract class Layer {
     abstract def backward()
 
     /**
-     * Such Layer as Fully Connected Layer or LCN Layer should override this
-     * Such Layer as Sigmoid Layer or Softmax Layer need not.
-     */
-    public void updateWeights(){}
-
-    /**
      * Only output layer should override this
      */
     public double getError(List<Integer> teachers) {
+        throw new RuntimeException("This should not be executed. Please override this, or never call!")
+    }
+
+    /**
+     * Only output layer should override this
+     * @return class index
+     */
+    public int predict(){
         throw new RuntimeException("This should not be executed. Please override this, or never call!")
     }
 
@@ -65,4 +71,5 @@ abstract class Layer {
     public double[] getOutputValues() {
         outputs*.value as double[]
     }
+
 }
