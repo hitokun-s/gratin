@@ -8,11 +8,10 @@ import util.Weight
  */
 class FullyConnLayer extends Layer {
 
-    Weight w
-
     public FullyConnLayer(List<Neuron> inputs, List<Neuron> outputs) {
         super(inputs, outputs)
         w = new Weight(inputs, outputs)
+        wd = new Weight(inputs, outputs)
     }
 
     def forward() {
@@ -24,19 +23,10 @@ class FullyConnLayer extends Layer {
     }
 
     def backward() {
+        // calculate and save input neuron's delta based on output neuron's delta(This is the back propagation!!)
         inputs.each { Neuron inN ->
             inN.delta = outputs.sum { Neuron outN ->
                 w[inN, outN] * outN.delta
-            }
-        }
-    }
-
-    @Override
-    public void updateWeights() {
-        inputs.each { Neuron inN ->
-            outputs.each { outN ->
-                def gradW = outN.delta * inN.value
-                w[inN,outN] -= gradW
             }
         }
     }
