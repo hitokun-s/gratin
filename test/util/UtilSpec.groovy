@@ -38,7 +38,7 @@ class UtilSpec extends Specification {
 
     def "normalize"(){
         given:
-            def data = [1,2,3,4,5] as List<Double>
+            def data = [1, 2, 3, 4, 5] as List<Double>
         when:
             Util.normalize(data)
             println data

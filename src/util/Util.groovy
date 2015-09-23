@@ -125,24 +125,41 @@ class Util {
         res
     }
 
+    /**
+     * average
+     */
+    public static def avg(List<Double> data){
+        data.sum() / data.size()
+    }
+
+    /**
+     * variance
+     */
+    public static def var(List<Double> data){
+        def avg = avg(data)
+        data.sum{(it - avg) * (it - avg)} / data.size()
+    }
+
+    /**
+     * deviation
+     */
+    public static def dev(List<Double> data){
+        Math.sqrt(var(data))
+    }
+
+    public static def normalize(List<Double> data) {
+        // ‚Æ‚è‚ ‚¦‚¸[0,1]i•½‹Ï0A•ªŽU‚Pj‚É³‹K‰»
+        def avg = avg(data)
+        def deviation = dev(data)
+        data.eachWithIndex { double d, int i ->
+            data[i] = (d - avg) / deviation
+        }
+    }
+
     public static def List<Neuron> neurons(int cnt) {
         // TODO ugly?
         (0..cnt - 1).collect {
             new Neuron(idx: it)
-        }
-    }
-
-    /**
-     * data normalization
-     * to be executed first of all
-     * @param data
-     */
-    public static def normalize(List<Double> data) {
-        // ‚Æ‚è‚ ‚¦‚¸[0,1]i•½‹Ï0A•ªŽU‚Pj‚É³‹K‰»
-        def avg = data.sum() / data.size()
-        def deviation = Math.sqrt(data.sum { (it - avg) * (it - avg) / data.size() })
-        data.eachWithIndex { double d, int i ->
-            data[i] = (d - avg) / deviation
         }
     }
 
