@@ -2,6 +2,7 @@ package components
 
 import layers.FullyConnLayer
 import layers.Layer
+import layers.SigmoidLayer
 import layers.SoftmaxLayer
 
 import static util.Util.*
@@ -29,6 +30,7 @@ class Net {
         def inputs = neurons(inputCnt)
         defs.each { Map df ->
             def outputs = neurons(df.count)
+            // layers << getLayerConstructor(df.name).newInstance(inputs, outputs)
             layers << getLayer(df.name, inputs, outputs)
             inputs = outputs // share reference
         }
@@ -105,11 +107,22 @@ class Net {
         layers.last().predict()
     }
 
-    // TODO preferable to return Constructor of Layer. Possible? and correct?
+//    Constructor getLayerConstructor(String name) {
+//        Class c
+//        switch (name) {
+//            case "fc": c = FullyConnLayer.class; break
+//            case "sm": c = SoftmaxLayer.class; break
+//            default: throw new RuntimeException()
+//        }
+//        c.getDeclaredConstructor([List.class, List.class] as Class[])
+//    }
+
+    // TODO which is better, above or this?
     def Layer getLayer(String name, List<Neuron> inputs, List<Neuron> outputs) {
         switch (name) {
             case "fc": new FullyConnLayer(inputs, outputs); break
             case "sm": new SoftmaxLayer(inputs, outputs); break
+            case "si": new SigmoidLayer(inputs, outputs); break
             default: throw new RuntimeException()
         }
     }
