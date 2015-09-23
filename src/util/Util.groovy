@@ -8,17 +8,17 @@ import components.Neuron
 class Util {
     // Array utilities
     public static def zeros = { n ->
-        new double[n?:0]
+        new double[n ?: 0]
     }
 
     public static def randf = { float a, b ->
-        Math.random()*(b-a)+a
+        Math.random() * (b - a) + a
     }
     public static def randi = { int a, b ->
-        Math.floor(Math.random()*(b-a)+a) as int
+        Math.floor(Math.random() * (b - a) + a) as int
     }
     public static def randn = { mu, std ->
-        mu + Util.gaussRandom()*std
+        mu + Util.gaussRandom() * std
     }
 
     static Boolean return_v = false
@@ -27,13 +27,13 @@ class Util {
     // syntactic sugar function for getting default parameter values
     public static def getopt = { opt, field_name, default_value ->
         def ret
-        if( field_name instanceof String) {
+        if (field_name instanceof String) {
             // case of single string
             ret = opt[field_name] ?: default_value
         } else {
             // assume we are given a list of string instead
             ret = default_value;
-            (field_name as String[]).each{ f ->
+            (field_name as String[]).each { f ->
                 if (opt[f]) {
                     ret = opt[f] // overwrite return value
                 }
@@ -43,23 +43,23 @@ class Util {
     }
 
     private static def gaussRandom = {
-        if(return_v) {
+        if (return_v) {
             return_v = false;
             return v_val;
         }
-        def u = 2*Math.random()-1;
-        def v = 2*Math.random()-1;
-        def r = u*u + v*v;
-        if(r == 0 || r > 1) return Util.gaussRandom();
-        def c = Math.sqrt(-2*Math.log(r)/r);
-        v_val = v*c; // cache this
+        def u = 2 * Math.random() - 1;
+        def v = 2 * Math.random() - 1;
+        def r = u * u + v * v;
+        if (r == 0 || r > 1) return Util.gaussRandom();
+        def c = Math.sqrt(-2 * Math.log(r) / r);
+        v_val = v * c; // cache this
         return_v = true;
-        return u*c;
+        return u * c;
     }
 
     public static def dotProduct = { x, y ->
         assert x && y && x.size() == y.size()
-        [x, y].transpose().collect{ xx, yy -> xx * yy }.sum()
+        [x, y].transpose().collect { xx, yy -> xx * yy }.sum()
     }
 
     // looks at a column i of data and guesses what's in it
@@ -71,15 +71,15 @@ class Util {
 //            vs.push(v);
 //            if(isNaN(v)) numeric = false;
 //        }
-        def vs = data.collect{it[c] as String}
-        Boolean numeric = (vs.find{!it.isNumber()} == null)
+        def vs = data.collect { it[c] as String }
+        Boolean numeric = (vs.find { !it.isNumber() } == null)
 
         def u = vs.unique()
-        if(!numeric) {
+        if (!numeric) {
             // if we have a non-numeric we will map it through uniques to an index
-            return [numeric:numeric, num:u.size(), uniques:u]
+            return [numeric: numeric, num: u.size(), uniques: u]
         } else {
-            return [numeric:numeric, num:u.size()]
+            return [numeric: numeric, num: u.size()]
         }
     }
 
@@ -93,13 +93,13 @@ class Util {
     }
 
     // logistic function
-    public static double sigma(double d){
-        1 / (1 + Math.exp(- d))
+    public static double sigma(double d) {
+        1 / (1 + Math.exp(-d))
     }
 
     // derived function of sigma
-    public static double sigmad(double d){
-         sigma(d) * (1 - sigma(d))
+    public static double sigmad(double d) {
+        sigma(d) * (1 - sigma(d))
     }
 
     /**
@@ -107,28 +107,43 @@ class Util {
      * ó·ÅFunitCnt : 3ÇÃèÍçá
      * [[0,0,0],[0,0,1],[0,1,0],[0,1,1],[1,0,0],[1,0,1],[1,1,0],[1,1,1]]
      */
-    public static def List getAllPattern(int unitCnt){
+    public static def List getAllPattern(int unitCnt) {
         def list = []
-        unitCnt.times{
-            list << [0,1]
+        unitCnt.times {
+            list << [0, 1]
         }
         list.combinations()
     }
 
-    public static def List<List<Neuron>> pairs(List<Neuron> neurons, Boolean bidirectional = false){
+    public static def List<List<Neuron>> pairs(List<Neuron> neurons, Boolean bidirectional = false) {
         def res = [neurons, neurons].combinations()
-        if(!bidirectional){
-            res.unique{List<Neuron> list ->
+        if (!bidirectional) {
+            res.unique { List<Neuron> list ->
                 list.sort()
             }
         }
         res
     }
 
-    public static def List<Neuron> neurons(int cnt){
+    public static def List<Neuron> neurons(int cnt) {
         // TODO ugly?
-        (0..cnt-1).collect{
-            new Neuron(idx:it)
+        (0..cnt - 1).collect {
+            new Neuron(idx: it)
         }
     }
+
+    /**
+     * data normalization
+     * to be executed first of all
+     * @param data
+     */
+    public static def normalize(List<Double> data) {
+        // Ç∆ÇËÇ†Ç¶Ç∏[0,1]ÅiïΩãœ0ÅAï™éUÇPÅjÇ…ê≥ãKâª
+        def avg = data.sum() / data.size()
+        def deviation = Math.sqrt(data.sum { (it - avg) * (it - avg) / data.size() })
+        data.eachWithIndex { double d, int i ->
+            data[i] = (d - avg) / deviation
+        }
+    }
+
 }

@@ -35,4 +35,17 @@ class UtilSpec extends Specification {
             res[3].idx == 3
             res[4].idx == 4
     }
+
+    def "normalize"(){
+        given:
+            def data = [1,2,3,4,5] as List<Double>
+        when:
+            Util.normalize(data)
+            println data
+            def avg = data.sum()/data.size()
+            def variance = data.sum{(it - avg) * (it -avg)} / data.size()
+        then:
+            (avg as Double).round(10) == 0 // needs rounding
+            (variance as Double).round(10) == 1 // needs rounding
+    }
 }
