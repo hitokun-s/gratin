@@ -4,7 +4,11 @@ Gratin
 Machine Learning Tool in [Groovy](http://www.groovy-lang.org/)  
 Deep learning will be covered in near future. 
 
-##Networks,Layers
+##Covered
+
+- Multilayer Perceptron
+
+##Components
 
 - Hopfield Network
 - Boltzmann Machine (simple, without hidden units, fully connected)
@@ -13,11 +17,12 @@ Deep learning will be covered in near future.
 - Fully Connected Layer
 - Sigmoid Layer
 
-##Utilities
+##Convenient Utilities
 
+- Weight
 - Matrix
 
-##Tests
+##Benchmark Tests
 
 - IRIS data
 
