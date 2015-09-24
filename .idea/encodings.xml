@@ -2,5 +2,9 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/.gitignore" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/groovy/gratin/layers/SigmoidLayer.groovy" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/groovy/gratin/util/Util.groovy" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/groovy/gratin/components/NetSpec.groovy" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/groovy/gratin/util/UtilSpec.groovy" charset="UTF-8" />
   </component>
 </project>

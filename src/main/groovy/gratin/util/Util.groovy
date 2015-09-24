@@ -86,7 +86,7 @@ class Util {
     }
 
     /**
-     * “n‚³‚ê‚½List‚©‚çƒ‰ƒ“ƒ_ƒ€‚É‚P‚Â‘I‚ñ‚Å•Ô‚·
+     * æ¸¡ã•ã‚ŒãŸListã‹ã‚‰ãƒ©ãƒ³ãƒ€ãƒ ã«ï¼‘ã¤é¸ã‚“ã§è¿”ã™
      */
     public static def getRandom = { List list ->
         Random rnd = new Random()
@@ -105,8 +105,8 @@ class Util {
     }
 
     /**
-     * 0,1‚©‚ç‚È‚é‘S‚Ä‚Ìƒpƒ^[ƒ“‚ğ”z—ñ‚Å•Ô‚·B”z—ñ‚Ì’·‚³‚ÍA2‚Ì[unitCnt]æ‚É‚È‚é
-     * —áFunitCnt : 3‚Ìê‡
+     * 0,1ã‹ã‚‰ãªã‚‹å…¨ã¦ã®ãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’é…åˆ—ã§è¿”ã™ã€‚é…åˆ—ã®é•·ã•ã¯ã€2ã®[unitCnt]ä¹—ã«ãªã‚‹
+     * ä¾‹ï¼šunitCnt : 3ã®å ´åˆ
      * [[0,0,0],[0,0,1],[0,1,0],[0,1,1],[1,0,0],[1,0,1],[1,1,0],[1,1,1]]
      */
     public static def List getAllPattern(int unitCnt) {
@@ -150,7 +150,7 @@ class Util {
     }
 
     public static def normalize(List<Double> data) {
-        // ‚Æ‚è‚ ‚¦‚¸[0,1]i•½‹Ï0A•ªU‚Pj‚É³‹K‰»
+        // ã¨ã‚Šã‚ãˆãš[0,1]ï¼ˆå¹³å‡0ã€åˆ†æ•£ï¼‘ï¼‰ã«æ­£è¦åŒ–
         def avg = avg(data)
         def deviation = dev(data)
         data.eachWithIndex { double d, int i ->
@@ -163,6 +163,15 @@ class Util {
         (0..cnt - 1).collect {
             new Neuron(idx: it)
         }
+    }
+
+    /**
+     * è¨ˆç®—æ©Ÿã‚¤ãƒ—ã‚·ãƒ­ãƒ³
+     * Machine Epsilon
+     */
+    public static def getEpsilon(){
+        double s1 = 1.0
+        Math.nextUp(s1) - s1
     }
 
 }
