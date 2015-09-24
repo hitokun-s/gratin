@@ -168,10 +168,11 @@ class Util {
     /**
      * 計算機イプシロン
      * Machine Epsilon
+     * refs : http://www.ibm.com/developerworks/jp/java/library/j-math2.html
      */
-    public static def getEpsilon(){
+    static double eps = {
         double s1 = 1.0
         Math.nextUp(s1) - s1
-    }
+    }()
 
 }

@@ -50,4 +50,12 @@ class UtilSpec extends Specification {
             (avg as Double).round(10) == 0 // needs rounding
             (variance as Double).round(10) == 1 // needs rounding
     }
+
+    def "eps"(){
+        when:
+            def d1 = (1.0 as double) + Util.eps
+            def d2 = Math.nextUp(1.0 as double)
+        then:
+            d1 == d2
+    }
 }
