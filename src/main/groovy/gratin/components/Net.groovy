@@ -65,7 +65,7 @@ class Net {
      */
     public void train(List<Map> teachers, int epochCnt = 0) {
 
-        println "let's train!"
+        log.info "let's train!"
 
         // TODO Totally ugly, You must die.
 
@@ -77,7 +77,7 @@ class Net {
         // batch learning
         while (toContinue) {
             epoch++
-            println "epoch:$epoch"
+            log.debug "epoch:$epoch"
             toContinue = false
             teachers.each { Map teacher ->
                 forward(teacher.in)

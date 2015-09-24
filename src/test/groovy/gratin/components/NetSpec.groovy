@@ -59,7 +59,7 @@ class NetSpec extends Specification {
         given:
             def defs = [
                 [name: 'fc', count: 4],
-//                [name: 'si', count: 4],
+                [name: 'si', count: 4],
                 [name: 'fc', count: 4],
                 [name: 'sm', count: 4]
             ]
@@ -71,7 +71,7 @@ class NetSpec extends Specification {
             ]
         when:
             def error1 = net.getError(sample)
-            net.train(sample,10900)
+            net.train(sample)
             def error2 = net.getError(sample)
             println error1
             println error2
