@@ -170,9 +170,12 @@ class Util {
      * Machine Epsilon
      * refs : http://www.ibm.com/developerworks/jp/java/library/j-math2.html
      */
-    static double eps = {
-        double s1 = 1.0
-        Math.nextUp(s1) - s1
-    }()
+//    static double eps = {
+//        double s1 = 1.0
+//        Math.nextUp(s1) - s1
+//    }()
+    static double eps = Math.ulp(1.0 as double)
+    // this returns same result of above implementation
+    // ulp = unit of least precision, unit in the last place （最終桁単位）
 
 }
