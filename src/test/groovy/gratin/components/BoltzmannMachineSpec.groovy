@@ -1,9 +1,7 @@
-package components
+package gratin.components
 
 import groovy.util.logging.Log4j
 import spock.lang.Specification
-import util.Relations
-import static util.Util.*
 
 /**
  * @author Hitoshi Wada

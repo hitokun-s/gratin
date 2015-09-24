@@ -1,6 +1,6 @@
-package util
+package gratin.util
 
-import components.Neuron
+import gratin.components.Neuron
 import groovy.util.logging.Log4j
 import spock.lang.Specification
 

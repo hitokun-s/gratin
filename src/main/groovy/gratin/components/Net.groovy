@@ -1,12 +1,12 @@
-package components
+package gratin.components
 
 import groovy.util.logging.Log4j
-import layers.FullyConnLayer
-import layers.Layer
-import layers.SigmoidLayer
-import layers.SoftmaxLayer
+import gratin.layers.FullyConnLayer
+import gratin.layers.Layer
+import gratin.layers.SigmoidLayer
+import gratin.layers.SoftmaxLayer
 
-import static util.Util.*
+import static gratin.util.Util.*
 
 /**
  * @author Hitoshi Wada
@@ -32,7 +32,7 @@ class Net {
         def inputs = neurons(inputCnt)
         defs.each { Map df ->
             def outputs = neurons(df.count)
-            // layers << getLayerConstructor(df.name).newInstance(inputs, outputs)
+            // gratin.layers << getLayerConstructor(df.name).newInstance(inputs, outputs)
             layers << getLayer(df.name, inputs, outputs)
             inputs = outputs // share reference
         }

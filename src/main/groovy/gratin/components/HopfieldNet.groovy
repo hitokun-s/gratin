@@ -1,10 +1,10 @@
-package components
+package gratin.components
 
 import groovy.util.logging.Log4j
-import util.Weight
+import gratin.util.Weight
 
-import static util.Util.getRandom
-import static util.Util.pairs
+import static gratin.util.Util.getRandom
+import static gratin.util.Util.pairs
 
 // TODO とりあえず書いてみる。あとで整理する。ネットワークのタイプごとにまとめなおす。
 /**

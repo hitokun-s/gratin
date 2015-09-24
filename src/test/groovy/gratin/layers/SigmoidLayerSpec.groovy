@@ -1,11 +1,10 @@
-package layers
+package gratin.layers
 
-import components.Neuron
+import gratin.components.Neuron
 import groovy.util.logging.Log4j
 import spock.lang.Specification
 
-import static util.Util.neurons
-import static util.Util.neurons
+import static gratin.util.Util.neurons
 
 /**
  * @author Hitoshi Wada

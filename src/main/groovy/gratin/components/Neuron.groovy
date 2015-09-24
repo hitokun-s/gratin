@@ -1,4 +1,4 @@
-package components
+package gratin.components
 
 import groovy.util.logging.Log4j
 

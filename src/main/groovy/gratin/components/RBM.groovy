@@ -1,9 +1,9 @@
-package components
+package gratin.components
 
 import groovy.util.logging.Log4j
-import util.Weight
+import gratin.util.Weight
 
-import static util.Util.*
+import static gratin.util.Util.*
 
 /**
  * Restricted Boltzmann Machine

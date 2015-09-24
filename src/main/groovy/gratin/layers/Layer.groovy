@@ -1,9 +1,8 @@
-package layers
+package gratin.layers
 
-import components.Neuron
+import gratin.components.Neuron
 import groovy.util.logging.Log4j
-import util.Weight
-import org.apache.log4j.Logger
+import gratin.util.Weight
 
 /**
  * Layerの責務（順伝播）：

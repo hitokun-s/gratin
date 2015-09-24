@@ -1,3 +1,4 @@
+import groovy.io.FileType
 import org.apache.log4j.PropertyConfigurator
 
 group 'gratin'
@@ -5,6 +6,7 @@ version '1.0.0-prealpha'
 
 apply plugin: 'groovy'
 apply plugin: 'java'
+apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.5
 
@@ -14,10 +16,48 @@ repositories {
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.3.11'
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile 'junit:junit:4.11'
     compile "org.spockframework:spock-core:1.0-groovy-2.3"
     compile 'log4j:log4j:1.2.17'
 }
 
+// This may be not necessary...
+//task clearBuildDir << {
+//    new File("build/libs").eachFile (FileType.FILES) { file ->
+//        println "Delete old file!:${file.name}"
+//        file.delete()
+//    }
+//}
+//tasks.jar.dependsOn(clearBuildDir)
 
+jar {
+    // refs : https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html
+    // The default archive name pattern is:
+    // [baseName]-[appendix]-[version]-[classifier].[extension]
 
+//    baseName = 'core'
+//    dependsOn classes
+//    from sourceSets.main.classes
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    exclude('data')
+}
+
+// ref:http://qiita.com/canpok1/items/6c31ae244ff7107dd7dc
+// command : gradle publish
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId "gratin"
+            artifactId "gratin"
+            version version
+            // jar‚Ö‚ÌƒpƒX
+            artifact "build\\libs\\gratin-1.0.0-prealpha.jar"
+        }
+    }
+    repositories {
+        maven {
+            // deploy target dir
+            url "${buildDir}/repo" //build/repo
+        }
+    }
+}

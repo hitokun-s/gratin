@@ -1,8 +1,8 @@
-package components
+package gratin.components
 
 import groovy.util.logging.Log4j
-import util.Weight
-import static util.Util.*
+import gratin.util.Weight
+import static gratin.util.Util.*
 
 /**
  * ボルツマンマシン

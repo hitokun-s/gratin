@@ -1,4 +1,4 @@
-package util
+package gratin.util
 
 import groovy.util.logging.Log4j
 

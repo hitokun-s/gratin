@@ -1,10 +1,10 @@
-package layers
+package gratin.layers
 
-import components.Neuron
+import gratin.components.Neuron
 import groovy.util.logging.Log4j
 
-import static util.Util.sigma
-import static util.Util.sigmad
+import static gratin.util.Util.sigma
+import static gratin.util.Util.sigmad
 
 /**
  * input neurons : output neurons = 1 : 1

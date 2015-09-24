@@ -1,2 +1,2 @@
-rootProject.name = 'gratin'
-
+// this setting can cause annoying problem, so comment outed.
+// rootProject.name = 'main'

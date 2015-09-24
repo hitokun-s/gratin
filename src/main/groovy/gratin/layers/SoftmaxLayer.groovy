@@ -1,6 +1,6 @@
-package layers
+package gratin.layers
 
-import components.Neuron
+import gratin.components.Neuron
 import groovy.util.logging.Log4j
 
 /**
