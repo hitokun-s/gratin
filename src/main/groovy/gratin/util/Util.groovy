@@ -8,6 +8,14 @@ import groovy.util.logging.Log4j
  */
 @Log4j
 class Util {
+
+    static{
+        File file = new File(this.classLoader.getResource("banner.txt").getFile())
+        if(file.exists()){
+            println file.text
+        }
+    }
+
     // Array utilities
     public static def zeros = { n ->
         new double[n ?: 0]
