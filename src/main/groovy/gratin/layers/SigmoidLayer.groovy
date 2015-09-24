@@ -13,7 +13,7 @@ import static gratin.util.Util.sigmad
  * @author Hitoshi Wada
  */
 @Log4j
-class SigmoidLayer extends Layer{
+class SigmoidLayer extends Layer {
 
     int pairCnt
 
@@ -25,16 +25,17 @@ class SigmoidLayer extends Layer{
 
     @Override
     def forward() {
-        println "forward!"
-        pairCnt.times{ idx ->
+        log.debug "forward!"
+        pairCnt.times { idx ->
             outputs[idx].value = sigma(inputs[idx].value)
         }
     }
 
     @Override
     def backward() {
-        println "backward!"
-        pairCnt.times{ idx ->
-            inputs[idx].delta = sigmad(outputs[idx].delta)}
+        log.debug "backward!"
+        pairCnt.times { idx ->
+            inputs[idx].delta = sigmad(inputs[idx].value) * outputs[idx].delta
+        }
     }
 }
