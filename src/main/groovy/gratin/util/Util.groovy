@@ -186,4 +186,15 @@ class Util {
     // this returns same result of above implementation
     // ulp = unit of least precision, unit in the last place （最終桁単位）
 
+    /**
+     * @return Euclidean distance
+     */
+    static double dist(List<Double> list1, List<Double> list2){
+        def squareSum = [list1, list2].transpose().sum{List<Double> pair ->
+            Math.pow(pair[0] - pair[1], 2)
+        }
+        Math.sqrt(squareSum)
+    }
+
+
 }

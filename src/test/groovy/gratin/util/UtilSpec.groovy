@@ -58,4 +58,11 @@ class UtilSpec extends Specification {
         then:
             d1 == d2
     }
+
+    def "dist"(){
+        when:
+            def res = Util.dist([1,3,5],[9,8,7])
+        then:
+            res == Math.sqrt(93)
+    }
 }
