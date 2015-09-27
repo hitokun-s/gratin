@@ -9,9 +9,9 @@ import groovy.util.logging.Log4j
 @Log4j
 class Util {
 
-    static{
+    static {
         File file = new File(this.classLoader.getResource("banner.txt").getFile())
-        if(file.exists()){
+        if (file.exists()) {
             println file.text
         }
     }
@@ -138,22 +138,22 @@ class Util {
     /**
      * average
      */
-    public static def avg(List<Double> data){
+    public static def avg(List<Double> data) {
         data.sum() / data.size()
     }
 
     /**
      * variance
      */
-    public static def var(List<Double> data){
+    public static def var(List<Double> data) {
         def avg = avg(data)
-        data.sum{(it - avg) * (it - avg)} / data.size()
+        data.sum { (it - avg) * (it - avg) } / data.size()
     }
 
     /**
      * deviation
      */
-    public static def dev(List<Double> data){
+    public static def dev(List<Double> data) {
         Math.sqrt(var(data))
     }
 
@@ -189,11 +189,55 @@ class Util {
     /**
      * @return Euclidean distance
      */
-    static double dist(List<Double> list1, List<Double> list2){
-        def squareSum = [list1, list2].transpose().sum{List<Double> pair ->
+    static double dist(List<Double> list1, List<Double> list2) {
+        def squareSum = [list1, list2].transpose().sum { List<Double> pair ->
             Math.pow(pair[0] - pair[1], 2)
         }
         Math.sqrt(squareSum)
+    }
+
+    /**
+     * 教師データ（CSVテキスト）を受け取って、List<[in:List<Double>, out:List<Double>]> のリストを返す
+     */
+    static List process(File file, List<Integer> dataColIndices, Integer classColIndex) {
+
+        List<String[]> csvLines = []
+
+        file.eachLine { String line ->
+            csvLines << line.split(",")
+        }
+        // convert class string into vector map
+        def vecMap = vecMap(csvLines.collect { csv ->
+            csv[classColIndex]
+        })
+
+        csvLines.collect { String[] csv ->
+            def data = []
+            csv.eachWithIndex { String s, int i ->
+                if (i in dataColIndices) {
+                    data << (s as Double)
+                }
+            }
+            [in: data, out: vecMap[csv[classColIndex]]]
+        }
+    }
+
+    /**
+     * convert class list into one-hot vector map
+     * ex.
+     * ["classA", "classB", "classC"] will be converted to
+     * [classA:[1,0,0], classB:[0,1,0],classC:[0,0,1]]
+     */
+    static Map vecMap(List list) {
+        // arg list should be unique list
+        list.unique()
+        def res = [:]
+        list.eachWithIndex { classObj, idx ->
+            def tmp = Util.zeros(list.size())
+            tmp[idx] = 1
+            res[classObj] = tmp as List<Double>
+        }
+        res
     }
 
 

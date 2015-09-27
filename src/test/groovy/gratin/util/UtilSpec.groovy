@@ -38,20 +38,20 @@ class UtilSpec extends Specification {
             res[4].idx == 4
     }
 
-    def "normalize"(){
+    def "normalize"() {
         given:
             def data = [1, 2, 3, 4, 5] as List<Double>
         when:
             Util.normalize(data)
             println data
-            def avg = data.sum()/data.size()
-            def variance = data.sum{(it - avg) * (it -avg)} / data.size()
+            def avg = data.sum() / data.size()
+            def variance = data.sum { (it - avg) * (it - avg) } / data.size()
         then:
             (avg as Double).round(10) == 0 // needs rounding
             (variance as Double).round(10) == 1 // needs rounding
     }
 
-    def "eps"(){
+    def "eps"() {
         when:
             def d1 = (1.0 as double) + Util.eps
             def d2 = Math.nextUp(1.0 as double)
@@ -59,10 +59,33 @@ class UtilSpec extends Specification {
             d1 == d2
     }
 
-    def "dist"(){
+    def "dist"() {
         when:
-            def res = Util.dist([1,3,5],[9,8,7])
+            def res = Util.dist([1, 3, 5], [9, 8, 7])
         then:
             res == Math.sqrt(93)
+    }
+
+    def "vecMap"() {
+        when:
+            def res = Util.vecMap(["a", "b", "c"])
+        then:
+            res == [
+                "a": [1.0, 0.0, 0.0],
+                "b": [0.0, 1.0, 0.0],
+                "c": [0.0, 0.0, 1.0]
+            ]
+    }
+
+    def "process"() {
+        given:
+            File file = new File(getClass().getClassLoader().getResource("data/iris.data.txt").getFile())
+        when:
+            def res = Util.process(file, [0, 1, 2, 3], 4)
+        then:
+            // 4.6,3.2,1.4,0.2,Iris-setosa  <--- randomly picked up
+            res.find {
+                it.in == [4.6, 3.2, 1.4, 0.2] && it.out == [1.0,0.0,0.0]
+            }
     }
 }
