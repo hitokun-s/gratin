@@ -88,4 +88,9 @@ class UtilSpec extends Specification {
                 it.in == [4.6, 3.2, 1.4, 0.2] && it.out == [1.0,0.0,0.0]
             }
     }
+
+    private List getIris(){
+        File file = new File(getClass().getClassLoader().getResource("data/iris.data.txt").getFile())
+        Util.process(file, [0, 1, 2, 3], 4)
+    }
 }
