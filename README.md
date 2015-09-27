@@ -21,6 +21,7 @@ Deep learning will be covered in near future.
 
 - Weight
 - Matrix
+- Huffman Tree
 
 ##Benchmark Tests
 
