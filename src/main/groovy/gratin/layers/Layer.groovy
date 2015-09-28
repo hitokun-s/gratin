@@ -1,8 +1,8 @@
 package gratin.layers
 
 import gratin.components.Neuron
-import groovy.util.logging.Log4j
 import gratin.util.Weight
+import groovy.util.logging.Log4j
 
 /**
  * Layerの責務（順伝播）：
@@ -72,6 +72,11 @@ abstract class Layer {
 
     public double[] getOutputValues() {
         outputs*.value as double[]
+    }
+
+    public void setTeacher(List<Double> teacher){
+        assert teacher.size() == outputs.size()
+        this.teacher = teacher
     }
 
 }

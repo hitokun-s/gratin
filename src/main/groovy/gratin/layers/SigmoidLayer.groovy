@@ -25,7 +25,6 @@ class SigmoidLayer extends Layer {
 
     @Override
     def forward() {
-        log.debug "forward!"
         pairCnt.times { idx ->
             outputs[idx].value = sigma(inputs[idx].value)
         }
@@ -33,7 +32,6 @@ class SigmoidLayer extends Layer {
 
     @Override
     def backward() {
-        log.debug "backward!"
         pairCnt.times { idx ->
             inputs[idx].delta = sigmad(inputs[idx].value) * outputs[idx].delta
         }

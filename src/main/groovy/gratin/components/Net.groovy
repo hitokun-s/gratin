@@ -22,7 +22,8 @@ class Net {
      * ex. args
      * [
      *    [ name : 'fc', count : 5 ],
-     *    [ name : 'fc', count : 7 ],
+     *    [ name : 'si', count : 5 ],
+     *    [ name : 'fc', count : 5 ],
      *    [ name : 'sm', count : 5]
      * ]
      * TODO should I create LayerDef Class?
@@ -32,7 +33,7 @@ class Net {
         def inputs = neurons(inputCnt)
         defs.each { Map df ->
             def outputs = neurons(df.count)
-            // gratin.layers << getLayerConstructor(df.name).newInstance(inputs, outputs)
+            // layers << getLayerConstructor(df.name).newInstance(inputs, outputs)
             layers << getLayer(df.name, inputs, outputs)
             inputs = outputs // share reference
         }
