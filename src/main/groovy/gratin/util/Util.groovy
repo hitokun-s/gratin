@@ -136,14 +136,14 @@ class Util {
     }
 
     /**
-     * average
+     * average：平均
      */
     public static def avg(List<Double> data) {
         data.sum() / data.size()
     }
 
     /**
-     * variance
+     * variance：分散
      */
     public static def var(List<Double> data) {
         def avg = avg(data)
@@ -151,16 +151,16 @@ class Util {
     }
 
     /**
-     * deviation
+     * Standard Deviation：標準偏差
      */
-    public static def dev(List<Double> data) {
+    public static def sd(List<Double> data) {
         Math.sqrt(var(data))
     }
 
     public static def normalize(List<Double> data) {
         // とりあえず[0,1]（平均0、分散１）に正規化
         def avg = avg(data)
-        def deviation = dev(data)
+        def deviation = sd(data)
         data.eachWithIndex { double d, int i ->
             data[i] = (d - avg) / deviation
         }
@@ -238,6 +238,38 @@ class Util {
             res[classObj] = tmp as List<Double>
         }
         res
+    }
+
+    /**
+     * how to use:
+     * def n = normalizer([[1,2,3],[2,3,4],...])
+     * net.train(n.data) // n.data is normalized whole sample data
+     * def normalized = n([4,2,3]) // can normalize new sample
+     */
+    static Closure normalizer(List<List<Double>> inputs) {
+
+        def avg = []
+        def sd = []
+
+        inputs[0].size().times { int colIdx ->
+            def colData = inputs.collect { it[colIdx] }
+            avg[colIdx] = Util.avg(colData)
+            sd[colIdx] = Util.sd(colData)
+            def normalized = Util.normalize(colData)
+            inputs.eachWithIndex {input,idx ->
+                input[colIdx] = normalized[idx]
+            }
+        }
+        // normalize function for one data
+        def cls = { List<Double> input ->
+            // I really want 'collectWithIndex{}' function for List
+            input.size().times{int colIdx ->
+                input[colIdx] = (input[colIdx] - avg[colIdx]) / sd[colIdx]
+            }
+            input
+        }
+//        cls.data = inputs
+        cls
     }
 
 

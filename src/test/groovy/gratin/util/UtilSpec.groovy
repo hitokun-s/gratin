@@ -3,6 +3,7 @@ package gratin.util
 import gratin.components.Neuron
 import groovy.util.logging.Log4j
 import spock.lang.Specification
+import static gratin.util.TestUtil.*
 
 /**
  * @author Hitoshi Wada
@@ -43,12 +44,11 @@ class UtilSpec extends Specification {
             def data = [1, 2, 3, 4, 5] as List<Double>
         when:
             Util.normalize(data)
-            println data
             def avg = data.sum() / data.size()
-            def variance = data.sum { (it - avg) * (it - avg) } / data.size()
+            def var = data.sum { (it - avg) * (it - avg) } / data.size()
         then:
-            (avg as Double).round(10) == 0 // needs rounding
-            (variance as Double).round(10) == 1 // needs rounding
+            nearlyEquals(avg, 0)
+            nearlyEquals(var, 1)
     }
 
     def "eps"() {
@@ -87,5 +87,21 @@ class UtilSpec extends Specification {
             res.find {
                 it.in == [4.6, 3.2, 1.4, 0.2] && it.out == [1.0,0.0,0.0]
             }
+    }
+
+    def "normalizer"(){
+        given:
+            def samples = [
+                [4,6,8],
+                [1,-3,7],
+                [-4,9,3]
+            ]
+        when:
+            def n = Util.normalizer(samples)
+            println samples
+            println n([7,8,9])
+        then:
+            nearlyEquals(Util.avg(samples.collect{it[0]}), 0) // average of col 1 data will be 0
+            nearlyEquals(Util.var(samples.collect{it[0]}), 1) // variance of col 1 data will be 1
     }
 }
