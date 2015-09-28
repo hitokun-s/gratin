@@ -88,20 +88,4 @@ class UtilSpec extends Specification {
                 it.in == [4.6, 3.2, 1.4, 0.2] && it.out == [1.0,0.0,0.0]
             }
     }
-
-    def "normalizer"(){
-        given:
-            def samples = [
-                [4,6,8],
-                [1,-3,7],
-                [-4,9,3]
-            ]
-        when:
-            def n = Util.normalizer(samples)
-            println samples
-            println n([7,8,9])
-        then:
-            nearlyEquals(Util.avg(samples.collect{it[0]}), 0) // average of col 1 data will be 0
-            nearlyEquals(Util.var(samples.collect{it[0]}), 1) // variance of col 1 data will be 1
-    }
 }

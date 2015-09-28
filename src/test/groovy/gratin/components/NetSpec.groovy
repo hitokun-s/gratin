@@ -1,5 +1,6 @@
 package gratin.components
 
+import gratin.util.Normalizer
 import gratin.util.TestUtil
 import gratin.util.Util
 import groovy.util.logging.Log4j
@@ -105,7 +106,7 @@ class NetSpec extends Specification {
             def net = new Net(defs, 4)
             def samples = TestUtil.getIris()
 
-            def n = normalizer(samples.collect { it.in }) // this changed 'in' data of samples!!
+            def n = new Normalizer(samples.collect { it.in }) // this changed 'in' data of samples!!
             println samples
 
         when:

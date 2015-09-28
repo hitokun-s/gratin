@@ -4,10 +4,6 @@ Gratin
 Machine Learning Tool in [Groovy](http://www.groovy-lang.org/)  
 Deep learning will be covered in near future. 
 
-##Covered
-
-- Multilayer Perceptron
-
 ##Components
 
 - Hopfield Network
@@ -19,10 +15,10 @@ Deep learning will be covered in near future.
 
 ##Convenient Utilities
 
-- Weight(between unit pair)
+- Weight ( between unit pair )
 - Matrix
 - Huffman Tree
-- normalizer(gratin.uti.Util.normalizer())
+- Normalizer ( special closure )
 
 ##Benchmark Tests
 
