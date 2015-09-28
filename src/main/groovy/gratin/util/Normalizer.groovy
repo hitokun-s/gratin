@@ -1,5 +1,6 @@
 package gratin.util
 
+import static gratin.util.Util.*
 /**
  * how to use:
  * def n = new Normalizer([[1,2,3],[2,3,4],...])
@@ -18,9 +19,9 @@ class Normalizer extends Closure {
         // Using closure such as List.collect{} here, causes an error. So I use 'for' loop instead.
         for (int colIdx in (0..inputs[0].size() - 1)) {
             def colData = inputs.collect { it[colIdx] }
-            avg[colIdx] = Util.avg(colData)
-            sd[colIdx] = Util.sd(colData)
-            def normalized = Util.normalize(colData)
+            avg[colIdx] = avg(colData)
+            sd[colIdx] = sd(colData)
+            def normalized = normalize(colData)
             inputs.eachWithIndex { input, idx ->
                 input[colIdx] = normalized[idx]
             }
