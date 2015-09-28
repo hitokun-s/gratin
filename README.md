@@ -19,9 +19,10 @@ Deep learning will be covered in near future.
 
 ##Convenient Utilities
 
-- Weight
+- Weight(between unit pair)
 - Matrix
 - Huffman Tree
+- normalizer(gratin.uti.Util.normalizer())
 
 ##Benchmark Tests
 
