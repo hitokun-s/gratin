@@ -70,7 +70,7 @@ class Net {
 
         // TODO Totally ugly, You must die.
 
-        double thresholdContinue = 0.01
+        double thresholdContinue = 0.1
         boolean toContinue = true
 
         int epoch = 0
@@ -78,7 +78,7 @@ class Net {
         // batch learning
         while (toContinue) {
             epoch++
-            log.debug "epoch:$epoch"
+            log.debug "epoch:$epoch, cost:${getError(teachers)}"
             toContinue = false
             teachers.each { Map teacher ->
                 forward(teacher.in)
@@ -105,6 +105,7 @@ class Net {
             if(epochCnt && epoch > epochCnt){
                 toContinue = false
             }
+            lr *= 0.99
         }
     }
 

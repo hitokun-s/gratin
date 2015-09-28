@@ -6,6 +6,7 @@ import groovy.util.logging.Log4j
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
 import spock.lang.Specification
+import static gratin.util.Util.*
 
 /**
  * @author Hitoshi Wada
@@ -89,7 +90,11 @@ class NetSpec extends Specification {
             error1 > error2
     }
 
-    def "multi layer perceptron for IRIS data"(){
+    /**
+     * IRISテストでPCA（正解率）をみよう！
+     * TODO 過学習かどうかは別テストでチェック
+     */
+    def "The percentage of correct answers for IRIS data > 98%"() {
         given:
             def defs = [
                 [name: 'fc', count: 4],
@@ -98,15 +103,20 @@ class NetSpec extends Specification {
                 [name: 'sm', count: 3]
             ]
             def net = new Net(defs, 4)
-            def sample = TestUtil.getIris()
+            def samples = TestUtil.getIris()
+
+            def n = normalizer(samples.collect { it.in }) // this changed 'in' data of samples!!
+            println samples
+
         when:
-            def error1 = net.getError(sample)
-            net.train(sample)
-            def error2 = net.getError(sample)
-            println error1
-            println error2
+            net.train(samples, 1500)
+            def trueOrFalse = samples.collect {
+                it.out.findIndexOf {it == 1.0} == net.predict(it.in)
+            }
+            def pca = trueOrFalse.count {it} / trueOrFalse.size()
+            println pca
         then:
-            error1 > error2
+            pca > 0.98
     }
 
     /**
