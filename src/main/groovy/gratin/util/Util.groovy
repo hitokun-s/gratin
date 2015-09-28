@@ -240,4 +240,13 @@ class Util {
         res
     }
 
+    /**
+     * select k elements randomly from given list, without any change of given list
+     */
+    static List getMultiRandom(List list, int k){
+        def indices = (0..list.size() - 1).toList()
+        Collections.shuffle(indices)
+        indices[0..k-1].collect{list[it]}
+    }
+
 }

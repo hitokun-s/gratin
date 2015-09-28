@@ -85,7 +85,19 @@ class UtilSpec extends Specification {
         then:
             // 4.6,3.2,1.4,0.2,Iris-setosa  <--- randomly picked up
             res.find {
-                it.in == [4.6, 3.2, 1.4, 0.2] && it.out == [1.0,0.0,0.0]
+                it.in == [4.6, 3.2, 1.4, 0.2] && it.out == [1.0, 0.0, 0.0]
             }
+    }
+
+    def "getMultiRandom"() {
+        given:
+            def sample = ["a", "b", "c", "d", "e"]
+        when:
+            def res = Util.getMultiRandom(sample, 3)
+            println res
+        then:
+            res.size() == 3
+            res.unique().size() == 3
+            sample.containsAll(res)
     }
 }
