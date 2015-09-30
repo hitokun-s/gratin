@@ -243,10 +243,21 @@ class Util {
     /**
      * select k elements randomly from given list, without any change of given list
      */
-    static List getMultiRandom(List list, int k){
+    static List getMultiRandom(List list, int k) {
         def indices = (0..list.size() - 1).toList()
         Collections.shuffle(indices)
-        indices[0..k-1].collect{list[it]}
+        indices[0..k - 1].collect { list[it] }
+    }
+
+    /**
+     * divide data into data for leaning and data for testing
+     * @param list
+     * @param ratio : ratio of data for testing against whole data
+     * @return [learn:List, test:List]
+     */
+    static Map divide(List list, double ratio) {
+        def test = getMultiRandom(list, Math.round(list.size() * ratio) as int)
+        [test: test, learn: list - test]
     }
 
 }

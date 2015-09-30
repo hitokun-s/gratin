@@ -100,4 +100,24 @@ class UtilSpec extends Specification {
             res.unique().size() == 3
             sample.containsAll(res)
     }
+
+    def "divide"(){
+        given:
+            def sample = [
+                [1,2,3],
+                [1,2,4],
+                [1,3,3],
+                [2,2,3],
+                [1,4,3],
+                [1,2,5],
+                [1,5,3],
+                [4,2,3],
+            ]
+        when:
+            def res = Util.divide(sample, 0.2)
+        then:
+            res.test.size() == 2
+            res.learn.size() == 6
+    }
+
 }
