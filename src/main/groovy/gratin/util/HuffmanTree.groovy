@@ -7,6 +7,7 @@ package gratin.util
  */
 class HuffmanTree {
 
+    // 暗号化マップ（keyは各ノード、valueは各ノードを暗号化されたバイナリ配列（List<Integer>））
     def dict = [:]
     List data
 
@@ -59,9 +60,9 @@ class HuffmanTree {
         }
         res.each{
             def target = it
-            def bits = ""
+            def bits = []
             while(target.parent){
-                bits += target.bit
+                bits << target.bit
                 target = target.parent
             }
             dict[it.item] = bits

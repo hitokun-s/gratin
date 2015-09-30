@@ -14,6 +14,6 @@ class HuffmanTreeSpec extends Specification {
             def tree = new HuffmanTree(sample)
             tree.encode()
         then:
-            tree.dict == ["a": "0", "b": "01", "c": "111", "d": "011"]
+            tree.dict == ["a": [0], "b": [0,1], "c": [1,1,1], "d": [0,1,1]]
     }
 }
