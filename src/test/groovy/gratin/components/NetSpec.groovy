@@ -95,7 +95,7 @@ class NetSpec extends Specification {
      * IRISテストでPCA（正解率）をみよう！
      * TODO 過学習かどうかは別テストでチェック
      */
-    def "The percentage of correct answers for IRIS data > 98%"() {
+    def "The percentage of correct answers for whole IRIS data > 98%"() {
         given:
             def defs = [
                 [name: 'fc', count: 4],
@@ -108,16 +108,42 @@ class NetSpec extends Specification {
 
             def n = new Normalizer(samples.collect { it.in }) // this changed 'in' data of samples!!
             println samples
-
         when:
             net.train(samples, 1500)
             def trueOrFalse = samples.collect {
-                it.out.findIndexOf {it == 1.0} == net.predict(it.in)
+                it.out.findIndexOf { it == 1.0 } == net.predict(it.in)
             }
-            def pca = trueOrFalse.count {it} / trueOrFalse.size()
+            def pca = trueOrFalse.count { it } / trueOrFalse.size()
             println pca
         then:
             pca > 0.98
+    }
+
+    def "The percentage of correct answers for IRIS cross validation check > 95%"() {
+        given:
+            def defs = [
+                [name: 'fc', count: 4],
+                [name: 'si', count: 4],
+                [name: 'fc', count: 3],
+                [name: 'sm', count: 3]
+            ]
+            def net = new Net(defs, 4)
+            def samples = TestUtil.getIris()
+            def division = divide(samples, 0.2)
+            def dataForTest = division.test
+            def dataForLearn = division.learn
+            def n = new Normalizer(dataForLearn.collect { it.in })
+
+        when:
+            net.train(dataForLearn, 1000)
+            def trueOrFalse = dataForTest.collect {
+                it.out.findIndexOf { it == 1.0 } == net.predict(n(it.in))
+            }
+            println "correct answer / test size = ${trueOrFalse.count { it }} / ${trueOrFalse.size()}"
+            def pca = trueOrFalse.count { it } / trueOrFalse.size()
+            println pca
+        then:
+            pca > 0.95
     }
 
     /**
