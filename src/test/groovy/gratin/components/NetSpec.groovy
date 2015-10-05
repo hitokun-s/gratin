@@ -8,6 +8,7 @@ import org.apache.log4j.Level
 import org.apache.log4j.Logger
 import spock.lang.Specification
 import static gratin.util.Util.*
+import static gratin.util.TestUtil.*
 
 /**
  * @author Hitoshi Wada
@@ -187,5 +188,37 @@ class NetSpec extends Specification {
         then:
             true
 
+    }
+
+    def "auto encoder"() {
+        given:
+            def defs = [
+                [name: 'fc', count: 3],
+                [name: 'si', count: 3],
+                [name: 'fc', count: 4],
+                [name: 'ms', count: 4]
+            ]
+            def net = new Net(defs, 4)
+            def samples = [
+                [in: [1, 2, 3, 4], out: [1, 2, 3, 4]],
+                [in: [4, 5, 6, 7], out: [4, 5, 6, 7]],
+                [in: [7, 8, 9, 10], out: [7, 8, 9, 10]]
+            ]
+            def n = new Normalizer(samples.collect { it.in })
+            samples.each {
+                it.out = it.in
+            }
+            println samples
+        when:
+            def error1 = net.getError(samples)
+            net.train(samples)
+            def error2 = net.getError(samples)
+            println "error1:$error1"
+            println "error2:$error2"
+        then:
+            error1 > error2
+            nearlyEquals(net.product(n([1, 2, 3, 4])), n([1, 2, 3, 4]))
+            nearlyEquals(net.product(n([4, 5, 6, 7])), n([4, 5, 6, 7]))
+            nearlyEquals(net.product(n([7, 8, 9, 10])), n([7, 8, 9, 10]))
     }
 }

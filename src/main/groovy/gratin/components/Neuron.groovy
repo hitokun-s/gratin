@@ -15,7 +15,7 @@ class Neuron {
 
     public double value = 0
 
-    double bias = 0
+    double bias = 0 // in FullyConnLayer, bias will be shared through all outputs neurons
 
     // derivative of Cost(Error) at this neuron's value
     // main character in back propagation and weight update

@@ -1,5 +1,6 @@
 package gratin.components
 
+import gratin.layers.MinSquaredLayer
 import groovy.util.logging.Log4j
 import gratin.layers.FullyConnLayer
 import gratin.layers.Layer
@@ -70,7 +71,7 @@ class Net {
 
         // TODO Totally ugly, You must die.
 
-        double thresholdContinue = 0.1
+        double thresholdContinue = 0.05
         boolean toContinue = true
 
         int epoch = 0
@@ -96,17 +97,27 @@ class Net {
             layers.findAll { it.w }.each { Layer layer ->
                 layer.inputs.each { Neuron inN ->
                     layer.outputs.each { outN ->
-                        layer.w[inN, outN] -= lr * layer.wd[inN, outN]
+                        def decay = 0
+                        if(layer instanceof FullyConnLayer){
+                            decay = 0.0001 * layer.w[inN, outN]
+                        }
+                        layer.w[inN, outN] -= lr * (layer.wd[inN, outN] + decay)
+//                        layer.w[inN, outN] -= lr * layer.wd[inN, outN]
                         // layer.wd[inN, outN] = 0 // this cause weird error, I don,t know why
                         layer.wd[inN, outN] = 0.000000000000000000000000000000000000000000000001 as double
                     }
                 }
             }
-            if(epochCnt && epoch > epochCnt){
+            if (epochCnt && epoch > epochCnt) {
                 toContinue = false
             }
             lr *= 0.99
         }
+    }
+
+    public List<Double> product(List<Double> data){
+        forward(data)
+        layers.last().outputValues
     }
 
     public int predict(List<Double> data) {
@@ -129,6 +140,7 @@ class Net {
         switch (name) {
             case "fc": new FullyConnLayer(inputs, outputs); break
             case "sm": new SoftmaxLayer(inputs, outputs); break
+            case "ms": new MinSquaredLayer(inputs, outputs); break
             case "si": new SigmoidLayer(inputs, outputs); break
             default: throw new RuntimeException()
         }

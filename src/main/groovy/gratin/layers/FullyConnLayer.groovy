@@ -12,6 +12,10 @@ class FullyConnLayer extends Layer {
 
     public FullyConnLayer(List<Neuron> inputs, List<Neuron> outputs) {
         super(inputs, outputs)
+        // set bias as random
+        outputs.each{Neuron outN ->
+            outN.bias = Math.random()
+        }
         w = new Weight(inputs, outputs)
         wd = new Weight(inputs, outputs)
     }
@@ -20,7 +24,7 @@ class FullyConnLayer extends Layer {
         outputs.each { Neuron outN ->
             outN.value = inputs.sum { Neuron inN ->
                 w[inN, outN] * inN.value
-            }
+            } + outN.bias
         }
     }
 
@@ -30,6 +34,10 @@ class FullyConnLayer extends Layer {
             inN.delta = outputs.sum { Neuron outN ->
                 w[inN, outN] * outN.delta
             }
+        }
+        // TODO Can I do this here? Funny?
+        outputs.each{Neuron outN ->
+            outN.bias -= 0.1 * outN.delta
         }
     }
 }
