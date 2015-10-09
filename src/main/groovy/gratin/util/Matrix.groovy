@@ -10,6 +10,11 @@ import groovy.util.logging.Log4j
 @Log4j
 class Matrix extends ArrayList<ArrayList> {
 
+    // 正方行列用
+    Matrix(int size){
+        this(size, size)
+    }
+
     public Matrix(int row, int col) {
         // Is there more elegant way?
         row.times {
@@ -41,12 +46,23 @@ class Matrix extends ArrayList<ArrayList> {
         res
     }
 
+    // 項同士を積算
+    Matrix multiply(Matrix m){
+        def res = clone()
+        rowCount.times { row ->
+            colCount.times { col ->
+                res[row][col] *= m[row][col]
+            }
+        }
+        res
+    }
+
     /**
      * 行列の積（dot product）を「*」にするか「dot」か、悩ましいところ。
      * numpyでは、「dot」を採用し、「*」は要素同士の積演算に当てている。
      * refs : http://www.lifewithpython.com/2014/11/python-use-matrix-operations.html
      */
-    Matrix multiply(Matrix m) {
+    Matrix dotProduct(Matrix m) {
         // check condition for multiply
         assert this.colCount == m.rowCount
         def res = new Matrix(this.rowCount, m.colCount)
@@ -102,5 +118,14 @@ class Matrix extends ArrayList<ArrayList> {
     def dotProduct = { List x, List y ->
         assert x && y && x.size() == y.size()
         [x, y].transpose().collect{ xx, yy -> xx * yy }.sum()
+    }
+
+    /**
+     * 全要素の和
+     */
+    public double sum(){
+        this.sum{List list ->
+            list.sum()
+        }
     }
 }
