@@ -10,7 +10,7 @@ import groovy.util.logging.Log4j
 @Log4j
 class Matrix extends ArrayList<ArrayList> {
 
-    // ³•ûs—ñ—p
+    // æ­£æ–¹è¡Œåˆ—ç”¨
     Matrix(int size) {
         this(size, size)
     }
@@ -66,7 +66,7 @@ class Matrix extends ArrayList<ArrayList> {
         res
     }
 
-    // €“¯m‚ğÏZ
+    // é …åŒå£«ã‚’ç©ç®—
     Matrix multiply(Matrix m) {
         def res = clone()
         rowCount.times { row ->
@@ -98,8 +98,8 @@ class Matrix extends ArrayList<ArrayList> {
     }
 
     /**
-     * s—ñ‚ÌÏidot productj‚ğu*v‚É‚·‚é‚©udotv‚©A”Y‚Ü‚µ‚¢‚Æ‚±‚ëB
-     * numpy‚Å‚ÍAudotv‚ğÌ—p‚µAu*v‚Í—v‘f“¯m‚ÌÏ‰‰Z‚É“–‚Ä‚Ä‚¢‚éB
+     * è¡Œåˆ—ã®ç©ï¼ˆdot productï¼‰ã‚’ã€Œ*ã€ã«ã™ã‚‹ã‹ã€Œdotã€ã‹ã€æ‚©ã¾ã—ã„ã¨ã“ã‚ã€‚
+     * numpyã§ã¯ã€ã€Œdotã€ã‚’æ¡ç”¨ã—ã€ã€Œ*ã€ã¯è¦ç´ åŒå£«ã®ç©æ¼”ç®—ã«å½“ã¦ã¦ã„ã‚‹ã€‚
      * refs : http://www.lifewithpython.com/2014/11/python-use-matrix-operations.html
      */
     Matrix dotProduct(Matrix m) {
@@ -161,7 +161,7 @@ class Matrix extends ArrayList<ArrayList> {
     }
 
     /**
-     * ‘S—v‘f‚Ì˜a
+     * å…¨è¦ç´ ã®å’Œ
      */
     public double sum() {
         this.sum { List list ->
@@ -201,14 +201,31 @@ class Matrix extends ArrayList<ArrayList> {
     }
 
     /**
-     * List‚ğŒp³‚µ‚Ä‚¢‚é‚Ì‚ÅA–¼‘O‚ğeach‚É‚Í‚Å‚«‚È‚¢B
-     * @param ƒNƒ[ƒWƒƒiˆø”‚ÍA—v‘f’lAsƒCƒ“ƒfƒbƒNƒXA—ñƒCƒ“ƒfƒbƒNƒXj
+     * Listã‚’ç¶™æ‰¿ã—ã¦ã„ã‚‹ã®ã§ã€åå‰ã‚’eachã«ã¯ã§ããªã„ã€‚
+     * @param ã‚¯ãƒ­ãƒ¼ã‚¸ãƒ£ï¼ˆå¼•æ•°ã¯ã€è¦ç´ å€¤ã€è¡Œã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€åˆ—ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ï¼‰
      */
     public Matrix forEach(Closure cls) {
         def res = clone()
         rowCount.times { row ->
             colCount.times { col ->
                 res[row][col] = cls(this[row][col], row, col)
+            }
+        }
+        res
+    }
+
+    /**
+     * çŸ©å½¢é ˜åŸŸã‚’åˆ‡ã‚Šå‡ºã™
+     * ï¼ˆä¾‹ï¼‰radius = 2 ãªã‚‰ã€[row][col]ã‚’ä¸­å¿ƒã«ã—ãŸã€5 * 5 ã®é ˜åŸŸã‚’è¿”ã™
+     * çŸ©å½¢é ˜åŸŸãŒå…ƒã®Matrixã‹ã‚‰ã¯ã¿å‡ºã‚‹å ´åˆã¯ã€0ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°ã™ã‚‹
+     */
+    public Matrix partial(int row, int col, int radius){
+        def size = radius * 2 + 1
+        def res = new Matrix(size)
+        int i = row - radius, j = col - radius
+        for(int m = 0; m < size ;m++){
+            for(int n = 0; n < size ;n++){
+                res[m][n] = this[i + m][j + n]
             }
         }
         res

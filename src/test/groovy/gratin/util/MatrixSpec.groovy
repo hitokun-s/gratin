@@ -222,7 +222,7 @@ class MatrixSpec extends Specification {
             ]
     }
 
-    def "forEach"(){
+    def "forEach"() {
         given:
             def m = new Matrix([
                 [5, 2, 3],
@@ -230,10 +230,34 @@ class MatrixSpec extends Specification {
                 [7, 8, 9]
             ])
         when:
-            def res = m.forEach {v,i,j ->
+            def res = m.forEach { v, i, j ->
                 v + 1
             }
         then:
             res == m + 1
     }
+
+    def "partial"() {
+        given:
+            def m = new Matrix([
+                [5, 2, 3, 7, 1, 0, 2],
+                [5, 2, 3, 6, 3, 7, 1],
+                [4, 0, 2, 1, 6, 2, 9],
+                [5, 6, 4, 1, 8, 9, 1],
+                [4, 1, 3, 3, 6, 2, 9],
+                [1, 0, 7, 8, 9, 2, 4],
+                [8, 3, 7, 6, 9, 2, 4],
+            ])
+        when:
+            def res = m.partial(3, 4, 2)
+        then:
+            res == [
+                [3, 6, 3, 7, 1],
+                [2, 1, 6, 2, 9],
+                [4, 1, 8, 9, 1],
+                [3, 3, 6, 2, 9],
+                [7, 8, 9, 2, 4]
+            ]
+    }
+
 }
