@@ -210,7 +210,7 @@ class Matrix extends ArrayList<ArrayList> {
         int i = row - radius, j = col - radius
         for (int m = 0; m < size; m++) {
             for (int n = 0; n < size; n++) {
-                res[m][n] = (i + m < 0 || i + m >= rowCount || j + n < 0 || j + n >= colCount) ? 0 : this[i + m][j + n] // 0 padding
+                res[m][n] = (i + m < 0 || i + m >= rowCount || j + n < 0 || j + n >= colCount) ? 0 : this[i + m][j + n] as double // 0 padding
             }
         }
         res
