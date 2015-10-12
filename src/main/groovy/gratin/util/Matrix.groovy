@@ -202,7 +202,7 @@ class Matrix extends ArrayList<ArrayList> {
 
     /**
      * Listを継承しているので、名前をeachにはできない。
-     * @param クロージャ（引数は、要素値、行インデックス、列インデックス）
+     * @param クロージャ （引数は、要素値、行インデックス、列インデックス）
      */
     public Matrix forEach(Closure cls) {
         def res = clone()
@@ -219,12 +219,12 @@ class Matrix extends ArrayList<ArrayList> {
      * （例）radius = 2 なら、[row][col]を中心にした、5 * 5 の領域を返す
      * 矩形領域が元のMatrixからはみ出る場合は、0パディングする
      */
-    public Matrix partial(int row, int col, int radius){
-        def size = radius * 2 + 1
+    public Matrix partial(int row, int col, int size) {
         def res = new Matrix(size)
+        def radius = (size - 1) / 2
         int i = row - radius, j = col - radius
-        for(int m = 0; m < size ;m++){
-            for(int n = 0; n < size ;n++){
+        for (int m = 0; m < size; m++) {
+            for (int n = 0; n < size; n++) {
                 res[m][n] = this[i + m][j + n]
             }
         }

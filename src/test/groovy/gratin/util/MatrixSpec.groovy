@@ -249,7 +249,7 @@ class MatrixSpec extends Specification {
                 [8, 3, 7, 6, 9, 2, 4],
             ])
         when:
-            def res = m.partial(3, 4, 2)
+            def res = m.partial(3, 4, 5)
         then:
             res == [
                 [3, 6, 3, 7, 1],
