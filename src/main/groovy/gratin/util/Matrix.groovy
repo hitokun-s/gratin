@@ -199,4 +199,18 @@ class Matrix extends ArrayList<ArrayList> {
     public Matrix translate(double max, double min) {
         ((this - this.min()) / (this.max() - this.min())) * (max - min) + min
     }
+
+    /**
+     * Listを継承しているので、名前をeachにはできない。
+     * @param クロージャ（引数は、要素値、行インデックス、列インデックス）
+     */
+    public Matrix forEach(Closure cls) {
+        def res = clone()
+        rowCount.times { row ->
+            colCount.times { col ->
+                res[row][col] = cls(this[row][col], row, col)
+            }
+        }
+        res
+    }
 }

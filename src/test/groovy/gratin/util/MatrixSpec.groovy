@@ -221,4 +221,19 @@ class MatrixSpec extends Specification {
                 [4, 4.5, 5]
             ]
     }
+
+    def "forEach"(){
+        given:
+            def m = new Matrix([
+                [5, 2, 3],
+                [4, 1, 6],
+                [7, 8, 9]
+            ])
+        when:
+            def res = m.forEach {v,i,j ->
+                v + 1
+            }
+        then:
+            res == m + 1
+    }
 }
