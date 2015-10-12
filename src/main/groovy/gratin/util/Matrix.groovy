@@ -164,36 +164,21 @@ class Matrix extends ArrayList<ArrayList> {
      * 全要素の和
      */
     public double sum() {
-        this.sum { List list ->
-            list.sum()
+        ((List)this).sum {
+            ((List)it).sum()
         }
     }
 
     public double max() {
-//        this.collect { List list ->
-//            list.max()
-//        }.max()
-        def res = this[0][0]
-        rowCount.times { row ->
-            colCount.times { col ->
-                if (this[row][col] > res) {
-                    res = this[row][col]
-                }
-            }
-        }
-        res
+        ((List)this).collect {
+            ((List)it).max()
+        }.max()
     }
 
     public double min() {
-        def res = this[0][0]
-        rowCount.times { row ->
-            colCount.times { col ->
-                if (this[row][col] < res) {
-                    res = this[row][col]
-                }
-            }
-        }
-        res
+        ((List)this).collect {
+            ((List)it).min()
+        }.min()
     }
 
     public Matrix translate(double max, double min) {
@@ -225,7 +210,7 @@ class Matrix extends ArrayList<ArrayList> {
         int i = row - radius, j = col - radius
         for (int m = 0; m < size; m++) {
             for (int n = 0; n < size; n++) {
-                res[m][n] = this[i + m][j + n]
+                res[m][n] = (i + m < 0 || i + m >= rowCount || j + n < 0 || j + n >= colCount) ? 0 : this[i + m][j + n] // 0 padding
             }
         }
         res

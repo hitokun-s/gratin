@@ -96,7 +96,7 @@ class MatrixSpec extends Specification {
             ])
     }
 
-    def "multiply"() {
+    def "dotProduct"() {
         given:
             def m1 = new Matrix([
                 [1, 2],
@@ -121,9 +121,9 @@ class MatrixSpec extends Specification {
                 [9, 8]
             ])
         when:
-            def multiplied12 = m1 * m2
-            def multiplied34 = m3 * m4
-            def multiplied56 = m5 * m6
+            def multiplied12 = m1.dotProduct(m2)
+            def multiplied34 = m3.dotProduct(m4)
+            def multiplied56 = m5.dotProduct(m6)
         then:
             multiplied12 == [
                 [23, 20],
@@ -249,14 +249,22 @@ class MatrixSpec extends Specification {
                 [8, 3, 7, 6, 9, 2, 4],
             ])
         when:
-            def res = m.partial(3, 4, 5)
+            def res1 = m.partial(3, 4, 5)
+            def res2 = m.partial(0, 1, 5)
         then:
-            res == [
+            res1 == [
                 [3, 6, 3, 7, 1],
                 [2, 1, 6, 2, 9],
                 [4, 1, 8, 9, 1],
                 [3, 3, 6, 2, 9],
                 [7, 8, 9, 2, 4]
+            ]
+            res2 == [
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 5, 2, 3, 7],
+                [0, 5, 2, 3, 6],
+                [0, 4, 0, 2, 1]
             ]
     }
 
