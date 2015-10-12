@@ -81,6 +81,21 @@ class MatrixSpec extends Specification {
             ]
     }
 
+    def "plus number"() {
+        given:
+            def m = new Matrix([
+                [1, 2],
+                [3, 4]
+            ])
+        when:
+            def res = m + 2
+        then:
+            res == new Matrix([
+                [3, 4],
+                [5, 6]
+            ])
+    }
+
     def "multiply"() {
         given:
             def m1 = new Matrix([
@@ -121,16 +136,89 @@ class MatrixSpec extends Specification {
             ]
     }
 
-    def "sum"(){
+    def "multiply number"() {
         given:
             def m = new Matrix([
-                [1,2,3],
-                [4,5,6],
-                [7,8,9]
+                [1, 2],
+                [3, 4]
+            ])
+        when:
+            def res = m * 2
+        then:
+            res == new Matrix([
+                [2, 4],
+                [6, 8]
+            ])
+    }
+
+    def "div number"() {
+        given:
+            def m = new Matrix([
+                [1, 2],
+                [3, 4]
+            ])
+        when:
+            def res = m / 2
+        then:
+            res == new Matrix([
+                [0.5, 1],
+                [1.5, 2]
+            ])
+    }
+
+    def "sum"() {
+        given:
+            def m = new Matrix([
+                [1, 2, 3],
+                [4, 5, 6],
+                [7, 8, 9]
             ])
         when:
             def res = m.sum()
         then:
             res == 45
+    }
+
+    def "max"() {
+        given:
+            def m = new Matrix([
+                [1, 2, 3],
+                [4, 9, 6],
+                [7, 8, 5]
+            ])
+        when:
+            def res = m.max()
+        then:
+            res == 9
+    }
+
+    def "min"() {
+        given:
+            def m = new Matrix([
+                [5, 2, 3],
+                [4, 1, 6],
+                [7, 8, 9]
+            ])
+        when:
+            def res = m.min()
+        then:
+            res == 1
+    }
+
+    def "translate"() {
+        given:
+            def m = new Matrix([
+                [5, 2, 3],
+                [4, 1, 6],
+                [7, 8, 9]
+            ])
+        when:
+            def res = m.translate(5, 1)
+        then:
+            res == [
+                [3, 1.5, 2],
+                [2.5, 1, 3.5],
+                [4, 4.5, 5]
+            ]
     }
 }

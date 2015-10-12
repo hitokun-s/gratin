@@ -11,7 +11,7 @@ import groovy.util.logging.Log4j
 class Matrix extends ArrayList<ArrayList> {
 
     // ê≥ï˚çsóÒóp
-    Matrix(int size){
+    Matrix(int size) {
         this(size, size)
     }
 
@@ -36,6 +36,16 @@ class Matrix extends ArrayList<ArrayList> {
         res
     }
 
+    Matrix plus(double d) {
+        def res = clone()
+        rowCount.times { row ->
+            colCount.times { col ->
+                res[row][col] += d
+            }
+        }
+        res
+    }
+
     Matrix minus(Matrix m) {
         def res = clone()
         rowCount.times { row ->
@@ -46,12 +56,42 @@ class Matrix extends ArrayList<ArrayList> {
         res
     }
 
+    Matrix minus(double d) {
+        def res = clone()
+        rowCount.times { row ->
+            colCount.times { col ->
+                res[row][col] -= d
+            }
+        }
+        res
+    }
+
     // çÄìØémÇêœéZ
-    Matrix multiply(Matrix m){
+    Matrix multiply(Matrix m) {
         def res = clone()
         rowCount.times { row ->
             colCount.times { col ->
                 res[row][col] *= m[row][col]
+            }
+        }
+        res
+    }
+
+    Matrix multiply(double d) {
+        def res = clone()
+        rowCount.times { row ->
+            colCount.times { col ->
+                res[row][col] *= d
+            }
+        }
+        res
+    }
+
+    Matrix div(double d) {
+        def res = clone()
+        rowCount.times { row ->
+            colCount.times { col ->
+                res[row][col] /= d
             }
         }
         res
@@ -117,15 +157,46 @@ class Matrix extends ArrayList<ArrayList> {
 
     def dotProduct = { List x, List y ->
         assert x && y && x.size() == y.size()
-        [x, y].transpose().collect{ xx, yy -> xx * yy }.sum()
+        [x, y].transpose().collect { xx, yy -> xx * yy }.sum()
     }
 
     /**
      * ëSóvëfÇÃòa
      */
-    public double sum(){
-        this.sum{List list ->
+    public double sum() {
+        this.sum { List list ->
             list.sum()
         }
+    }
+
+    public double max() {
+//        this.collect { List list ->
+//            list.max()
+//        }.max()
+        def res = this[0][0]
+        rowCount.times { row ->
+            colCount.times { col ->
+                if (this[row][col] > res) {
+                    res = this[row][col]
+                }
+            }
+        }
+        res
+    }
+
+    public double min() {
+        def res = this[0][0]
+        rowCount.times { row ->
+            colCount.times { col ->
+                if (this[row][col] < res) {
+                    res = this[row][col]
+                }
+            }
+        }
+        res
+    }
+
+    public Matrix translate(double max, double min) {
+        ((this - this.min()) / (this.max() - this.min())) * (max - min) + min
     }
 }
