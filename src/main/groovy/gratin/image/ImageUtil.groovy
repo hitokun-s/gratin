@@ -66,8 +66,6 @@ class ImageUtil {
 
     /**
      * 輝度値範囲を0-255に変換してグレースケール画像にする
-     * @param m
-     * @return
      */
     public static Image matrixToImage(Matrix m) {
         m = m.translate(255,0)
@@ -81,5 +79,32 @@ class ImageUtil {
             }
         }
         img
+    }
+
+    /**
+     * RGB3チャネルのMatrixを、画像に変換する
+     * TODO チャネル順がRGBというのが暗黙の了解になっているのは、やっぱりマズイ？
+     */
+    public static Image matrixToImage(List<Matrix> list) {
+        def (r,g,b) = list as Matrix[]
+        int h = ((Matrix)r).rowCount
+        int w = ((Matrix)r).colCount
+        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB)
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                int rgb = rgb(r[y][x] as int, g[y][x] as int, b[y][x] as int)
+                img.setRGB(x, y, rgb);
+            }
+        }
+        img
+    }
+
+    public static Image filter(BufferedImage img, Matrix window){
+        List<Matrix> list = imageToMatrix(img)
+        def filter = new Filter(window)
+        list = list.collect {Matrix m ->
+            filter.exec(m)
+        }
+        matrixToImage(list)
     }
 }
