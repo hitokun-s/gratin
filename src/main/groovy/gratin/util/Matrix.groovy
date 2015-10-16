@@ -215,4 +215,14 @@ class Matrix extends ArrayList<ArrayList> {
         }
         res
     }
+
+    // 全要素数
+    public int getTotalCount(){
+        this.rowCount * this.colCount
+    }
+
+    // 左上から数えたインデックス
+    public int getTotalIndex(int row, int col){
+        colCount * row + col
+    }
 }
