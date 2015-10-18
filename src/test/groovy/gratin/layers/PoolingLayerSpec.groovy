@@ -51,9 +51,6 @@ class PoolingLayerSpec extends Specification {
                 windowSize: 3,
                 stride    : 2
             ])
-            Bond.findAllByE(n28).each{
-                println it
-            }
         then:
             Bond.findAllByE(n28).size() == 6
             Bond.findAllByE(n28).containsAll([
