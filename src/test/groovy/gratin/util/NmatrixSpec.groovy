@@ -65,18 +65,29 @@ class NmatrixSpec extends Specification {
 
     def "forEachWithIndexByStride"() {
         given:
-            NMatrix m = new NMatrix(5, 5)
+            NMatrix m1 = new NMatrix(5, 5)
+            NMatrix m2 = new NMatrix(5, 5)
         when:
-            m.forEachWithIndexByStride(2){Neuron v,int i,int j,int strideX, int strideY ->
+            m1.forEachWithIndexByStride(2){Neuron v,int i,int j,int strideX, int strideY ->
+                v.value = 1
+            }
+            m2.forEachWithIndexByStride(3){Neuron v,int i,int j,int strideX, int strideY ->
                 v.value = 1
             }
         then:
-            m as Matrix == [
+            m1 as Matrix == [
                 [1,0,1,0,1],
                 [0,0,0,0,0],
                 [1,0,1,0,1],
                 [0,0,0,0,0],
                 [1,0,1,0,1]
+            ]
+            m2 as Matrix == [
+                [1,0,0,1,0],
+                [0,0,0,0,0],
+                [0,0,0,0,0],
+                [1,0,0,1,0],
+                [0,0,0,0,0]
             ]
     }
 }
