@@ -27,6 +27,6 @@ class Neuron {
 
     @Override
     public String toString(){
-        "Neuron:$idx"
+        "Neuron(idx:$idx,value:$value)"
     }
 }
