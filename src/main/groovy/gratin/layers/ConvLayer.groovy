@@ -28,7 +28,7 @@ class ConvLayer {
     Matrix4D filters
     GMatrix4D sharedWeights // filtersと同じ形の4D行列。そこに重み共有しているBondリストを登録していく
     int filterTypeCount
-    int filterSize
+    int windowSize
     int stride
 
     ConvLayer(NMatrix3D inputs, NMatrix3D outputs, Map opt = []) {
@@ -40,15 +40,15 @@ class ConvLayer {
 
         if(opt.filters){
             filters = opt.filters
-            filterSize = filters.row
+            windowSize = filters.row
         }else{
-            filterSize = opt.filterSize ?: 11
-            filters = new Matrix4D(filterTypeCount, channelSize, filterSize, filterSize)
+            windowSize = opt.windowSize ?: 11
+            filters = new Matrix4D(filterTypeCount, channelSize, windowSize, windowSize)
         }
         stride = opt.stride ?: 4
 
         // TODO ugly! stupid! f**k!
-        sharedWeights = new GMatrix4D(filterTypeCount, channelSize, filterSize, filterSize) // 初期値は空配列
+        sharedWeights = new GMatrix4D(filterTypeCount, channelSize, windowSize, windowSize) // 初期値は空配列
         createBond()
     }
 

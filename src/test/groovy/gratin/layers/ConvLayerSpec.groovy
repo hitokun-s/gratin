@@ -62,7 +62,7 @@ class ConvLayerSpec extends Specification {
             ])
         when:
             def layer = new ConvLayer(inputs, outputs, [
-                filterSize: 3,
+                windowSize: 3,
                 stride    : 1
             ])
             def target = (List) (layer.sharedWeights[1][1][2][2])
