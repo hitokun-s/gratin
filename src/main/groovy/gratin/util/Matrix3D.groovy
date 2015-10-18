@@ -19,6 +19,10 @@ class Matrix3D extends ArrayList<Matrix>{
         super(source)
     }
 
+    public Matrix3D(Matrix m){
+        this << m
+    }
+
     int getDepth(){
         this.size()
     }
@@ -51,6 +55,14 @@ class Matrix3D extends ArrayList<Matrix>{
     }
 
     public int ti(int depth, int row, int col){
-        this[0].totalCount * depth + this[0].getTotalIndex(row, col)
+        getTotalIndex(depth, row, col)
+    }
+
+    /**
+     * getTotalIndex ‚Ì‹t
+     * @return [depth, row, col]
+     */
+    public List getEachIndex(int totalIndex){
+        [(int)(totalIndex / this[0].totalCount)] + this[0].getEachIndex(totalIndex % this[0].totalCount)
     }
 }

@@ -59,4 +59,24 @@ class Matrix3DSpec extends Specification {
                 [11, 9, 10],
             ]
     }
+
+    def "getEachIndex"() {
+        given:
+            def m = new Matrix3D([
+                new Matrix([
+                    [1, 2, 3, 5],
+                    [4, 1, 6, 1],
+                    [7, 3, 5, 2]
+                ]),
+                new Matrix([
+                    [2, 3, 6, 7],
+                    [1, 6, 9, 4],
+                    [3, 5, 4, 2]
+                ])
+            ])
+        when:
+            def res = m.getEachIndex(16)
+        then:
+            res == [1, 1, 0]
+    }
 }

@@ -225,4 +225,12 @@ class Matrix extends ArrayList<ArrayList> {
     public int getTotalIndex(int row, int col){
         colCount * row + col
     }
+
+    /**
+     * getTotalIndex の逆
+     * @return [row, col]
+     */
+    public List getEachIndex(int totalIndex){
+        [totalIndex / this.colCount, totalIndex % this.colCount]
+    }
 }
