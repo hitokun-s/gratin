@@ -56,10 +56,27 @@ class NmatrixSpec extends Specification {
                 [7, 8, 9]
             ])
         when:
-            m.forEach {Neuron n ->
+            m.forEach { Neuron n ->
                 n.value = n.value * n.value
             }
         then:
             m[1][1].value == 100
+    }
+
+    def "forEachWithIndexByStride"() {
+        given:
+            NMatrix m = new NMatrix(5, 5)
+        when:
+            m.forEachWithIndexByStride(2){Neuron v,int i,int j,int strideX, int strideY ->
+                v.value = 1
+            }
+        then:
+            m as Matrix == [
+                [1,0,1,0,1],
+                [0,0,0,0,0],
+                [1,0,1,0,1],
+                [0,0,0,0,0],
+                [1,0,1,0,1]
+            ]
     }
 }

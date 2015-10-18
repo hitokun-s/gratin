@@ -17,7 +17,7 @@ class NMatrix extends ArrayList<ArrayList<Neuron>> {
         // Is there more elegant way?
         row.times {
             List tmp = []
-            col.times{
+            col.times {
                 tmp << new Neuron()
             }
             this << tmp
@@ -25,12 +25,12 @@ class NMatrix extends ArrayList<ArrayList<Neuron>> {
     }
 
     public NMatrix(List<List<Object>> source) {
-        if(source[0][0] instanceof Neuron){
+        if (source[0][0] instanceof Neuron) {
             source.each { List<Neuron> list ->
                 this << list
             }
-        }else{
-            source.size().times{
+        } else {
+            source.size().times {
                 this << source[it].collect { new Neuron(value: it) }
             }
 //            ((List<List<Double>>)source).each { List<Double> list ->
@@ -144,19 +144,6 @@ class NMatrix extends ArrayList<ArrayList<Neuron>> {
         this.collect { it[i] }
     }
 
-    // This override is not necessary
-//    @Override
-//    public boolean equals(Object m){
-//        rowCount.times{ row ->
-//            colCount.times{ col ->
-//                if(this[row][col] != m[row][col]){
-//                    return false
-//                }
-//            }
-//        }
-//        this
-//    }
-
     public int getRowCount() {
         this.size()
     }
@@ -193,7 +180,7 @@ class NMatrix extends ArrayList<ArrayList<Neuron>> {
 
     public double min() {
         ((List) this).collect { List<Neuron> list ->
-            ((List) list).min{ it.value }
+            ((List) list).min { it.value }
         }.min { it.value }.value
     }
 
@@ -224,6 +211,19 @@ class NMatrix extends ArrayList<ArrayList<Neuron>> {
         }
     }
 
+    public void forEachWithIndexByStride(int stride, Closure cls) {
+        int strideX = -1
+        int strideY = -1
+        for (int i = 0; i < rowCount; i += stride) {
+            strideX++
+            for (int j = 0; j < colCount; j += stride) {
+                strideY++
+                cls(this[i][j], i, j, strideX, strideY)
+            }
+            strideY = -1
+        }
+    }
+
     /**
      * 矩形領域を切り出す
      * （例）radius = 2 なら、[row][col]を中心にした、5 * 5 の領域を返す
@@ -240,5 +240,15 @@ class NMatrix extends ArrayList<ArrayList<Neuron>> {
             }
         }
         res
+    }
+
+    // 「as Matrix」 によって、valueだけ取り出してMatrixを返す
+    Object asType(Class clazz) {
+        if (clazz == Matrix) {
+            return new Matrix(this.collect{List<Neuron> row ->
+                row.collect{it.value}
+            })
+        }
+        throw new RuntimeException("unsupported type conversion into:${clazz.name}")
     }
 }
