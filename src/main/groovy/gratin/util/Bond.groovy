@@ -31,7 +31,7 @@ class Bond {
 
     @Override
     public String toString(){
-        "s:$s, e:$e"
+        "Bond(s:$s, e:$e)"
     }
 
     static List<Bond> pool = []
