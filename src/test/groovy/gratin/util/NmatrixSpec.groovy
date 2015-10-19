@@ -17,7 +17,7 @@ class NmatrixSpec extends Specification {
                 [7, 8, 9]
             ])
         when:
-            def res = m.sum()
+            def res = m.sumValue()
         then:
             res == 45
     }
@@ -30,7 +30,7 @@ class NmatrixSpec extends Specification {
                 [7, 8, 5]
             ])
         when:
-            def res = m.max()
+            def res = m.maxValue()
         then:
             res == 9
     }
@@ -43,7 +43,7 @@ class NmatrixSpec extends Specification {
                 [7, 8, 9]
             ])
         when:
-            def res = m.min()
+            def res = m.minValue()
         then:
             res == 1
     }
