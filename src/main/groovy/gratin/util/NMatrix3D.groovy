@@ -34,6 +34,23 @@ class NMatrix3D extends ArrayList<NMatrix>{
         }
     }
 
+    /**
+     * Neuronリストを、3D行列に変換する。ConvLayer、PoolingLayerなどで使う。
+     */
+    public NMatrix3D(List<Neuron> source, int depth, int row, int col){
+        assert source.size() == depth * row * col
+        source.collate(col).collate(row).each{
+            this << new NMatrix(it)
+        }
+    }
+
+    // 上のコンストラクタの逆の処理
+    public List<Neuron> toNeurons(){
+        this.sum{ NMatrix m ->
+            m.sum()
+        }
+    }
+
 
     int getDepth(){
         this.size()
