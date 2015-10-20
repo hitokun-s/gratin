@@ -2,12 +2,7 @@ package gratin.layers
 
 import gratin.components.Neuron
 import gratin.image.Filter
-import gratin.util.Bond
-import gratin.util.GMatrix4D
-import gratin.util.Matrix
-import gratin.util.Matrix3D
-import gratin.util.Matrix4D
-import gratin.util.NMatrix3D
+import gratin.util.*
 
 /**
  * Neuron方式での畳み込み層
@@ -15,12 +10,11 @@ import gratin.util.NMatrix3D
  * 結合関係を、Neuron同士のマップとして記憶してしまえば、forward／backwardでは、何も考えなくてよい。
  * @author Hitoshi Wada
  */
-class ConvLayer {
+class ConvLayer extends Layer{
 
-    // 基本方針
+    // [基本方針]
     // フィルタは４つの次元、フィルタ種類、入力チャネル、x座標、y座標、を持つ。
-    // フィルタ重み共有は、hoge[フィルタ種類][入力チャネル][x座標][y座標]に、bondリストをセットすることで実現する
-    // hogeの実体は、四次元行列でも、四深度マップでも、二深度マップ×二元行列でも、何でもいい。
+    // フィルタ重み共有は、sharedWeights[フィルタ種類][入力チャネル][x座標][y座標]に、bondリストをセットすることで実現する
 
     NMatrix3D inputs
     NMatrix3D outputs
@@ -31,12 +25,16 @@ class ConvLayer {
     int windowSize
     int stride
 
-    ConvLayer(NMatrix3D inputs, NMatrix3D outputs, Map opt = []) {
-        this.inputs = inputs
-        this.outputs = outputs
+    ConvLayer(List<Neuron> inputs, List<Neuron> outputs, Map opt = [:]) {
 
-        filterTypeCount = outputs.depth
-        int channelSize = inputs.depth
+        super(inputs, outputs)
+
+        // TODO 設定冗長すぎ！
+        this.inputs = new NMatrix3D(inputs, opt.channelCount, opt.in.height, opt.in.width)
+        this.outputs = new NMatrix3D(inputs, opt.filterTypeCount, opt.out.height, opt.out.width)
+
+        filterTypeCount = opt.filterTypeCount
+        int channelSize = opt.channelCount
 
         if(opt.filters){
             filters = opt.filters
@@ -63,7 +61,6 @@ class ConvLayer {
     }
 
     def forward() {
-        shareWeight() // どこで呼ぶか？
         outputs.forEach { Neuron outN ->
             outN.value = Bond.findAllByE(outN).sum { Bond b ->
                 b.w * b.s.value
@@ -72,9 +69,11 @@ class ConvLayer {
     }
 
     def backward() {
+        // やってることはFullyConnLayerと全く同じ！
         inputs.forEach { Neuron inN ->
             inN.delta = Bond.findAllByS(inN).sum { Bond b ->
-                b.w * b.e.delta // TODO こう書くのならば、wはすでに重み共有処理されているべき！
+                b.wd += b.e.delta * inN.value // accumlate weight gradient for batch learning
+                b.w * b.e.delta
             }
         }
         // TODO Can I do this here? Funny?
@@ -83,12 +82,17 @@ class ConvLayer {
         }
     }
 
-    /**
-     * フィルター重みを、それを共有している各重みに転写する
-     */
-    public void shareWeight(){
+    @Override
+    def update(){
         sharedWeights.forEachWithIndex {List<Bond> bonds, int fIdx, int cIdx, int row, int col ->
-            bonds*.w = filters[fIdx][cIdx][row][col]
+            def gradH = bonds.sum{Bond b -> b.wd} //
+            def h = filters[fIdx][cIdx][row][col] // フィルター重み勾配 = それを共有している仮重み勾配の総和
+            def decay = 0.0001 * h
+            h -= lr * (gradH + decay) // フィルター重みを更新
+            filters[fIdx][cIdx][row][col] = h
+            bonds*.w = h // フィルター重みを共有仮重みへ反映
+            bonds*.wd = 0 // 仮重みを初期化
         }
     }
+
 }

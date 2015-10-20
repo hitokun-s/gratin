@@ -8,7 +8,8 @@ import gratin.components.Neuron
 class Bond {
     Neuron s // 始端
     Neuron e // 終端
-    Double w
+    double w // 重み
+    double wd // 重み勾配
 
     static Map<Neuron, List> sMap = [:]
     static Map<Neuron, List> eMap = [:]
