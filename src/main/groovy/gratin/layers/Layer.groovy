@@ -23,6 +23,8 @@ import groovy.util.logging.Log4j
 @Log4j
 abstract class Layer {
 
+    double lr = 0.1 // learning Rate. 必要なら各LayerでOverrideすればいい。
+
     List<Neuron> inputs
     List<Neuron> outputs
 
@@ -38,6 +40,7 @@ abstract class Layer {
 
     abstract def forward()
     abstract def backward()
+    def update(){} // パラメータ更新用。必要なLayer（FullyConnLayer, ConvLayer）でOverrideすること。
 
     /**
      * Only output layer should override this

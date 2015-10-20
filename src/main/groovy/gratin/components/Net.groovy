@@ -1,6 +1,8 @@
 package gratin.components
 
+import gratin.layers.ConvLayer
 import gratin.layers.MinSquaredLayer
+import gratin.layers.PoolingLayer
 import groovy.util.logging.Log4j
 import gratin.layers.FullyConnLayer
 import gratin.layers.Layer
@@ -14,8 +16,6 @@ import static gratin.util.Util.*
  */
 @Log4j
 class Net {
-
-    double lr = 0.1 // learning Rate
 
     List<Layer> layers = []
 
@@ -80,42 +80,43 @@ class Net {
         while (toContinue) {
             epoch++
             log.debug "epoch:$epoch, cost:${getError(teachers)}"
-            toContinue = false
+//            toContinue = false
             teachers.each { Map teacher ->
                 forward(teacher.in)
                 backward(teacher.out)
-                layers.findAll { it.w }.each { Layer layer ->
-                    layer.inputs.each { inN ->
-                        layer.outputs.each { outN ->
-                            def gradW = outN.delta * inN.value
-                            layer.wd[inN, outN] += gradW // accumlate weight gradient for batch learning
-                            if (Math.abs(gradW) > thresholdContinue) toContinue = true
-                        }
-                    }
-                }
+//                layers.findAll { it.w }.each { Layer layer ->
+//                    layer.inputs.each { inN ->
+//                        layer.outputs.each { outN ->
+//                            def gradW = outN.delta * inN.value
+//                            layer.wd[inN, outN] += gradW // accumlate weight gradient for batch learning
+//                            if (Math.abs(gradW) > thresholdContinue) toContinue = true
+//                        }
+//                    }
+//                }
             }
-            layers.findAll { it.w }.each { Layer layer ->
-                layer.inputs.each { Neuron inN ->
-                    layer.outputs.each { outN ->
-                        def decay = 0
-                        if(layer instanceof FullyConnLayer){
-                            decay = 0.0001 * layer.w[inN, outN]
-                        }
-                        layer.w[inN, outN] -= lr * (layer.wd[inN, outN] + decay)
-//                        layer.w[inN, outN] -= lr * layer.wd[inN, outN]
-                        // layer.wd[inN, outN] = 0 // this cause weird error, I don,t know why
-                        layer.wd[inN, outN] = 0.000000000000000000000000000000000000000000000001 as double
-                    }
-                }
-            }
+//            layers.findAll { it.w }.each { Layer layer ->
+//                layer.inputs.each { Neuron inN ->
+//                    layer.outputs.each { outN ->
+//                        def decay = 0
+//                        if(layer instanceof FullyConnLayer){
+//                            decay = 0.0001 * layer.w[inN, outN]
+//                        }
+//                        layer.w[inN, outN] -= lr * (layer.wd[inN, outN] + decay)
+////                        layer.w[inN, outN] -= lr * layer.wd[inN, outN]
+//                        // layer.wd[inN, outN] = 0 // this cause weird error, I don,t know why
+//                        layer.wd[inN, outN] = 0.000000000000000000000000000000000000000000000001 as double
+//                    }
+//                }
+//            }
+            layers*.update()
             if (epochCnt && epoch > epochCnt) {
                 toContinue = false
             }
-            lr *= 0.99
+//            lr *= 0.99 // äeLayer.update()Ç÷à⁄çs
         }
     }
 
-    public List<Double> product(List<Double> data){
+    public List<Double> product(List<Double> data) {
         forward(data)
         layers.last().outputValues
     }
@@ -125,24 +126,15 @@ class Net {
         layers.last().predict()
     }
 
-//    Constructor getLayerConstructor(String name) {
-//        Class c
-//        switch (name) {
-//            case "fc": c = FullyConnLayer.class; break
-//            case "sm": c = SoftmaxLayer.class; break
-//            default: throw new RuntimeException()
-//        }
-//        c.getDeclaredConstructor([List.class, List.class] as Class[])
-//    }
-
-    // TODO which is better, above or this?
-    def Layer getLayer(String name, List<Neuron> inputs, List<Neuron> outputs) {
+    def Layer getLayer(String name, List<Neuron> inputs, List<Neuron> outputs, Map opt = [:]) {
         switch (name) {
             case "fc": new FullyConnLayer(inputs, outputs); break
             case "sm": new SoftmaxLayer(inputs, outputs); break
             case "ms": new MinSquaredLayer(inputs, outputs); break
             case "si": new SigmoidLayer(inputs, outputs); break
-            default: throw new RuntimeException()
+            case "cv": new ConvLayer(inputs, outputs, opt); break
+            case "pl": new PoolingLayer(inputs, outputs, opt); break
+            default: throw new RuntimeException("Invalid Layer Def!")
         }
     }
 }
