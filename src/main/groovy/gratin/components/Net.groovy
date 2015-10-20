@@ -65,13 +65,13 @@ class Net {
      *
      * @param teachers List<[in:double[], out.double]>
      */
-    public void train(List<Map> teachers, int epochCnt = 0) {
+    public void train(List<Map> teachers, int epochCnt = 1500) {
 
         log.info "let's train!"
 
         // TODO Totally ugly, You must die.
 
-        double thresholdContinue = 0.05
+        double thresholdContinue = 0.05 // TODO ‚±‚ê‚ðŽg‚Á‚ÄAepochCnt‚É‚æ‚ç‚È‚¢Žû‘©”»’è‚à‚Å‚«‚é‚æ‚¤‚É‚µ‚½‚¢
         boolean toContinue = true
 
         int epoch = 0
@@ -84,30 +84,7 @@ class Net {
             teachers.each { Map teacher ->
                 forward(teacher.in)
                 backward(teacher.out)
-//                layers.findAll { it.w }.each { Layer layer ->
-//                    layer.inputs.each { inN ->
-//                        layer.outputs.each { outN ->
-//                            def gradW = outN.delta * inN.value
-//                            layer.wd[inN, outN] += gradW // accumlate weight gradient for batch learning
-//                            if (Math.abs(gradW) > thresholdContinue) toContinue = true
-//                        }
-//                    }
-//                }
             }
-//            layers.findAll { it.w }.each { Layer layer ->
-//                layer.inputs.each { Neuron inN ->
-//                    layer.outputs.each { outN ->
-//                        def decay = 0
-//                        if(layer instanceof FullyConnLayer){
-//                            decay = 0.0001 * layer.w[inN, outN]
-//                        }
-//                        layer.w[inN, outN] -= lr * (layer.wd[inN, outN] + decay)
-////                        layer.w[inN, outN] -= lr * layer.wd[inN, outN]
-//                        // layer.wd[inN, outN] = 0 // this cause weird error, I don,t know why
-//                        layer.wd[inN, outN] = 0.000000000000000000000000000000000000000000000001 as double
-//                    }
-//                }
-//            }
             layers*.update()
             if (epochCnt && epoch > epochCnt) {
                 toContinue = false
