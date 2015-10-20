@@ -9,9 +9,10 @@ import gratin.util.NMatrix3D
 
 /**
  * Pooling Layer
+ * 結合Bondの重みwを、maxプーリングのためのフラグ（最大結合を１とする）として使っている
  * @author Hitoshi Wada
  */
-class PoolingLayer {
+class PoolingLayer extends Layer{
 
     NMatrix3D inputs
     NMatrix3D outputs
@@ -19,14 +20,16 @@ class PoolingLayer {
     int stride
     int channelSize
 
-    PoolingLayer(NMatrix3D inputs, NMatrix3D outputs, Map opt = []) {
+    PoolingLayer(List<Neuron> inputs, List<Neuron> outputs, Map opt = [:]) {
 
-        assert inputs.depth == outputs.depth // 入力チャネル毎にプーリング処理をして出力するので、入力チャネル数＝出力チャネル数、になる。
+        super(inputs, outputs)
 
-        this.inputs = inputs
-        this.outputs = outputs
-        channelSize = inputs.depth
+        this.inputs = new NMatrix3D(inputs, opt.channelCount, opt.in.height, opt.in.width)
+        this.outputs = new NMatrix3D(inputs, opt.channelCount, opt.out.height, opt.out.width)
 
+        assert this.inputs.depth == this.outputs.depth // 入力チャネル数＝出力チャネル数、にならないとおかしい
+
+        channelSize = opt.channelCount
         windowSize = opt.windowSize ?: 5
         stride = opt.stride ?: 4
         assert (int) ((inputs.row - 1) / stride) + 1 == outputs.row // stride > 1なら出力サイズは縮小する
