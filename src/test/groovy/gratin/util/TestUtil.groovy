@@ -14,17 +14,28 @@ class TestUtil {
         Util.process(file, [0, 1, 2, 3], 4)
     }
 
+    /**
+     * refs:http://y-uti.hatenablog.jp/entry/2014/07/23/074845
+     * @param limit : 取得する画像データ数
+     * @return List<[image : Matrix, label : int]>
+     */
     public static List<Matrix> getMNIST(int limit = 60000){
+        // image data
         def stream = new FileInputStream(TestUtil.getClassLoader().getResource("data/train-images.idx3-ubyte").getFile())
-        byte[] header = new byte[16]
+        byte[] header = new byte[16] // header data
         stream.read(header)
         assert ByteBuffer.wrap(header[0..3] as byte[]).int == 0x00000803 // magic number
         assert ByteBuffer.wrap(header[4..7] as byte[]).int == 60000 // number of images
         assert ByteBuffer.wrap(header[8..11] as byte[]).int == 28 // number of rows
         assert ByteBuffer.wrap(header[12..15] as byte[]).int == 28 // number of cols
 
+        // label data
+        def labelStream = new FileInputStream(TestUtil.getClassLoader().getResource("data/train-labels.idx1-ubyte").getFile())
+        byte[] labelHeader = new byte[8] // header data
+        labelStream.read(labelHeader)
+
         int cnt = 0
-        List<Matrix> res = []
+        def res = []
         while(cnt++ < limit){
             // 1 byte(unsigned byte) for 1 pixel of greyscale, 1 image is made of 28 * 28 pixels
             byte[] tmp = new byte[28 * 28]
@@ -33,9 +44,12 @@ class TestUtil {
             int[] tmp2 = tmp.collect{byte unsigned ->
                 (int)(unsigned & 0xFF)
             }
-            res << new Matrix((tmp2 as List<Double>).collate(28))
+            byte[] tmpLabel = new byte[1]
+            labelStream.read(tmpLabel)
+            res << [image : new Matrix((tmp2 as List<Double>).collate(28)), label : (int)tmpLabel[0]]
         }
         stream.close()
+        labelStream.close()
         res
     }
 
