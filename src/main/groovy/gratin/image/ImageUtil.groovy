@@ -5,6 +5,7 @@ import gratin.util.Matrix
 import javax.imageio.ImageIO
 import java.awt.Image
 import java.awt.image.BufferedImage
+import java.awt.image.DataBuffer
 
 /**
  * @author Hitoshi Wada
@@ -32,6 +33,7 @@ class ImageUtil {
     }
 
     public static int rgb(int r, int g, int b) {
+//        println "r:$r, g:$g, b:$b"
         0xff000000 | r << 16 | g << 8 | b
     }
 
@@ -66,16 +68,20 @@ class ImageUtil {
 
     /**
      * 輝度値範囲を0-255に変換してグレースケール画像にする
+     * 参考：http://www.hamanoweb.com/blog/?p=3151
      */
     public static Image matrixToImage(Matrix m) {
-        m = m.translate(255,0)
+        m = m.translate(255, 0)
         int w = m.colCount
         int h = m.rowCount
-        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB)
+
+        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_GRAY)
+        DataBuffer dstBuf = img.getRaster().getDataBuffer()
+
+//        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB)
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
-                int rgb = rgb(m[y][x] as int, m[y][x] as int, m[y][x] as int)
-                img.setRGB(x, y, rgb);
+                dstBuf.setElem(y * w + x, (int)Math.round(m[y][x]))
             }
         }
         img
@@ -86,9 +92,9 @@ class ImageUtil {
      * TODO チャネル順がRGBというのが暗黙の了解になっているのは、やっぱりマズイ？
      */
     public static Image matrixToImage(List<Matrix> list) {
-        def (r,g,b) = list as Matrix[]
-        int h = ((Matrix)r).rowCount
-        int w = ((Matrix)r).colCount
+        def (r, g, b) = list as Matrix[]
+        int h = ((Matrix) r).rowCount
+        int w = ((Matrix) r).colCount
         BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB)
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
@@ -99,10 +105,10 @@ class ImageUtil {
         img
     }
 
-    public static Image filter(BufferedImage img, Matrix window){
+    public static Image filter(BufferedImage img, Matrix window) {
         List<Matrix> list = imageToMatrix(img)
         def filter = new Filter(window)
-        list = list.collect {Matrix m ->
+        list = list.collect { Matrix m ->
             filter.exec(m)
         }
         matrixToImage(list)
