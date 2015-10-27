@@ -12,7 +12,12 @@ import gratin.util.NMatrix3D
  * 結合Bondの重みwを、maxプーリングのためのフラグ（最大結合を１とする）として使っている
  * @author Hitoshi Wada
  */
-class PoolingLayer extends Layer{
+class PoolingLayer extends Layer {
+
+    static def defOpts = [
+        stride    : 4,
+        windowSize: 5
+    ]
 
     NMatrix3D inputs
     NMatrix3D outputs
@@ -30,8 +35,8 @@ class PoolingLayer extends Layer{
         assert this.inputs.depth == this.outputs.depth // 入力チャネル数＝出力チャネル数、にならないとおかしい
 
         channelSize = opt.channelCount
-        windowSize = opt.windowSize ?: 5
-        stride = opt.stride ?: 4
+        windowSize = opt.windowSize ?: defOpts.windowSize
+        stride = opt.stride ?: defOpts.stride
         assert (int) ((inputs.row - 1) / stride) + 1 == outputs.row // stride > 1なら出力サイズは縮小する
 
         createBond()
@@ -77,6 +82,27 @@ class PoolingLayer extends Layer{
         outputs.forEach { Neuron outN ->
             def maxBond = Bond.findAllByE(outN).find { it.w == 1 }
             maxBond.s.delta += outN.delta // maxBond.s.delta = outN.delta だと、重複してmaxになる場合にマズイ気がする。
+        }
+    }
+
+    /**
+     * df.inputCount, df.outputCount など必要パラメータをセットする
+     */
+    static def setInputAndOutputCount(Map df) {
+        assert df.opt
+        Map opt = df.opt
+        assert opt.channelCount && opt.in && opt.in.width && opt.in.height // 必須パラメータ
+        if(!opt.stride) opt.stride = defOpts.stride
+        if(!opt.windowSize) opt.windowSize = defOpts.windowSize
+        if(!df.inputCount){
+            df.inputCount = opt.channelCount * opt.in.height * opt.in.width
+        }
+        if(!opt.out){
+            opt.out = [
+                height : (int) ((opt.in.height - 1) / opt.stride) + 1,
+                width : (int) ((opt.in.width - 1) / opt.stride) + 1
+            ]
+            df.outputCount = opt.filterTypeCount * opt.out.height * opt.out.width
         }
     }
 }

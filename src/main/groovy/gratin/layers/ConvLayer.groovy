@@ -16,6 +16,11 @@ class ConvLayer extends Layer{
     // フィルタは４つの次元、フィルタ種類、入力チャネル、x座標、y座標、を持つ。
     // フィルタ重み共有は、sharedWeights[フィルタ種類][入力チャネル][x座標][y座標]に、bondリストをセットすることで実現する
 
+    static def defOpts = [
+        stride    : 4,
+        windowSize: 5
+    ]
+
     NMatrix3D inputs
     NMatrix3D outputs
 
@@ -29,9 +34,10 @@ class ConvLayer extends Layer{
 
         super(inputs, outputs)
 
-        // TODO 設定冗長すぎ！
-        this.inputs = new NMatrix3D(inputs, opt.channelCount, opt.in.height, opt.in.width)
-        this.outputs = new NMatrix3D(inputs, opt.filterTypeCount, opt.out.height, opt.out.width)
+        assert inputs[0] instanceof Neuron && outputs[0] instanceof Neuron
+
+        this.inputs = new NMatrix3D(inputs, opt.channelCount, opt.height, opt.width)
+        this.outputs = new NMatrix3D(outputs, opt.filterTypeCount, opt.height, opt.width)
 
         filterTypeCount = opt.filterTypeCount
         int channelSize = opt.channelCount
@@ -40,10 +46,10 @@ class ConvLayer extends Layer{
             filters = opt.filters
             windowSize = filters.row
         }else{
-            windowSize = opt.windowSize ?: 11
+            windowSize = opt.windowSize ?: defOpts.windowSize
             filters = new Matrix4D(filterTypeCount, channelSize, windowSize, windowSize)
         }
-        stride = opt.stride ?: 4
+        stride = opt.stride ?: defOpts.stride
 
         // TODO ugly! stupid! f**k!
         sharedWeights = new GMatrix4D(filterTypeCount, channelSize, windowSize, windowSize) // 初期値は空配列
@@ -93,6 +99,17 @@ class ConvLayer extends Layer{
             bonds*.w = h // フィルター重みを共有仮重みへ反映
             bonds*.wd = 0 // 仮重みを初期化
         }
+    }
+
+    /**
+     * df.optをもとに、df.inputCount, df.outputCountをセットする
+     */
+    static def setInputAndOutputCount(Map df) {
+        assert df.opt
+        Map opt = df.opt
+        assert opt.channelCount && opt.height && opt.width && opt.filterTypeCount
+        df.inputCount = opt.channelCount * opt.height * opt.width
+        df.outputCount = opt.filterTypeCount * opt.height * opt.width
     }
 
 }

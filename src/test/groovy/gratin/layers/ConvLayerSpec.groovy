@@ -61,9 +61,13 @@ class ConvLayerSpec extends Specification {
                 ])
             ])
         when:
-            def layer = new ConvLayer(inputs, outputs, [
-                windowSize: 3,
-                stride    : 1
+            def layer = new ConvLayer(inputs.toNeurons(), outputs.toNeurons(), [
+                channelCount   : 3,
+                filterTypeCount: 2,
+                windowSize     : 3,
+                height         : 3,
+                width          : 4,
+                stride         : 1
             ])
             def target = (List) (layer.sharedWeights[1][1][2][2])
         then:
@@ -96,11 +100,11 @@ class ConvLayerSpec extends Specification {
             def filters = new Matrix4D(window)
 
             // RGBを別々の入力として、別々の層で処理する（そうしないと通常の画像フィルタにならない）。各inputは、深さ１の行列
-            def (inputR, inputG, inputB) = ImageUtil.imageToNMatrix3D(img).collect{new NMatrix3D(it)}
+            def (inputR, inputG, inputB) = ImageUtil.imageToNMatrix3D(img).collect { new NMatrix3D(it) }
 
         when:
             long totalTime = 0
-            def (outputR, outputG, outputB) = [inputR, inputG, inputB].collect{NMatrix3D inputs ->
+            def (outputR, outputG, outputB) = [inputR, inputG, inputB].collect { NMatrix3D inputs ->
                 NMatrix3D outputs = new NMatrix3D(1, inputs.row, inputs.col) // フィルターは1種類にする
                 println "convLayer construct!"
                 def layer = new ConvLayer(inputs, outputs, [

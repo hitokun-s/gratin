@@ -25,10 +25,10 @@ class NetSpec extends Specification {
     def "train can decrease Error"() {
         given:
             def defs = [
-                [name: 'fc', count: 4],
-                [name: 'sm', count: 4]
+                [name: 'fc', inputCount:4, outputCount: 4],
+                [name: 'sm', outputCount: 4]
             ]
-            def net = new Net(defs, 4)
+            def net = new Net(defs)
             def sample = [
                 [in: [1, 2, 3, 4], out: [0, 1, 0, 0]],
                 [in: [1, 2, 1, 2], out: [1, 0, 0, 0]],
@@ -48,10 +48,10 @@ class NetSpec extends Specification {
     def "predict"() {
         given:
             def defs = [
-                [name: 'fc', count: 4],
-                [name: 'sm', count: 4]
+                [name: 'fc', inputCount: 4, outputCount: 4],
+                [name: 'sm']
             ]
-            def net = new Net(defs, 4)
+            def net = new Net(defs)
             def sample = [
                 [in: [1, 2, 3, 4], out: [0, 1, 0, 0]],
                 [in: [1, 2, 1, 2], out: [1, 0, 0, 0]],
@@ -70,13 +70,14 @@ class NetSpec extends Specification {
 
     def "multi layer perceptron"() {
         given:
+            // これだけ最低限の設定でちゃんとネットワークが完成できる！
             def defs = [
-                [name: 'fc', count: 4],
-                [name: 'si', count: 4],
-                [name: 'fc', count: 4],
-                [name: 'sm', count: 4]
+                [name: 'fc', inputCount: 4, outputCount : 4],
+                [name: 'si'],
+                [name: 'fc'],
+                [name: 'sm', outputCount: 4]
             ]
-            def net = new Net(defs, 4)
+            def net = new Net(defs)
             def sample = [
                 [in: [1, 2, 3, 4], out: [0, 1, 0, 0]],
                 [in: [1, 2, 1, 2], out: [1, 0, 0, 0]],
@@ -99,10 +100,10 @@ class NetSpec extends Specification {
     def "The percentage of correct answers for whole IRIS data > 98%"() {
         given:
             def defs = [
-                [name: 'fc', count: 4],
-                [name: 'si', count: 4],
-                [name: 'fc', count: 3],
-                [name: 'sm', count: 3]
+                [name: 'fc', inputCount: 4, outputCount : 4],
+                [name: 'si'],
+                [name: 'fc'],
+                [name: 'sm', outputCount: 3]
             ]
             def net = new Net(defs, 4)
             def samples = TestUtil.getIris()
@@ -123,10 +124,10 @@ class NetSpec extends Specification {
     def "The percentage of correct answers for IRIS cross validation check > 95%"() {
         given:
             def defs = [
-                [name: 'fc', count: 4],
-                [name: 'si', count: 4],
-                [name: 'fc', count: 3],
-                [name: 'sm', count: 3]
+                [name: 'fc', inputCount: 4, outputCount : 4],
+                [name: 'si'],
+                [name: 'fc'],
+                [name: 'sm', outputCount: 3]
             ]
             def net = new Net(defs, 4)
             def samples = TestUtil.getIris()
@@ -156,10 +157,10 @@ class NetSpec extends Specification {
     def "diagnose correctness of backprop implementation by difference approximation around weight gradient"() {
         given:
             def defs = [
-                [name: 'fc', count: 4],
-                [name: 'si', count: 4],
-                [name: 'fc', count: 4],
-                [name: 'sm', count: 4]
+                [name: 'fc', inputCount: 4, outputCount : 4],
+                [name: 'si'],
+                [name: 'fc'],
+                [name: 'sm', outputCount: 4]
             ]
             def net = new Net(defs, 4)
             def sample = [

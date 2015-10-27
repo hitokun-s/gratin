@@ -22,21 +22,22 @@ class Net {
     /**
      * ex. args
      * [
-     *    [ name : 'fc', count : 5 ],
-     *    [ name : 'si', count : 5 ],
-     *    [ name : 'fc', count : 5 ],
-     *    [ name : 'sm', count : 5]
+     *    [ name : 'fc', inputCount : 4, outputCount : 5 ],
+     *    [ name : 'si'],
+     *    [ name : 'fc', outputCount : 5 ],
+     *    [ name : 'sm', outputCount : 5]
      * ]
-     * TODO should I create LayerDef Class?
      * @param defs
      */
-    public Net(List<Map> defs, int inputCnt) {
-        def inputs = neurons(inputCnt)
+    public Net(List<Map> defs) {
+        completeDefs(defs) // 一部プロパティ（inputCount、outputCountなど）がなければ自動計算。前後の層とも整合を取る。
+        assert defs.every { Map df -> df.inputCount && df.outputCount }
+
+        def inputs = neurons(defs[0].inputCount)
         defs.each { Map df ->
-            def outputs = neurons(df.count)
-            // layers << getLayerConstructor(df.name).newInstance(inputs, outputs)
-            layers << getLayer(df.name, inputs, outputs)
-            inputs = outputs // share reference
+            def outputs = neurons(df.outputCount)
+            layers << getLayer(df.name, inputs, outputs, df.opt)
+            inputs = outputs // share reference between 2 layers
         }
     }
 
@@ -101,6 +102,64 @@ class Net {
     public int predict(List<Double> data) {
         forward(data)
         layers.last().predict()
+    }
+
+    /**
+     * 例えば、畳み込み層では、filterTypeCountやchannelCountから、入出力ユニット数は自動決定できる。
+     * また、前LayerのoutputCount == 次LayerのinpputCount という関係からも自動決定できる。
+     * 最終的に「すべてのLayer定義が、inputCount、outputCountを持つ」ようにすることが責務
+     * 一応、最低限の情報だけ定義すればよいという、親切機能のつもり。。。
+     */
+    def completeDefs(List<Map> defs) {
+        // How dangerous is this logic...how can I guarantee this can work perfectly?
+
+        int loopCnt = 0
+        while (defs.any { !it.inputCount || !it.outputCount }) {
+            if (loopCnt++ > defs.size()) break
+            defs.eachWithIndex { Map df, int i ->
+                if (df.inputCount && df.outputCount) return // もうセット済なら用なし
+
+                // inputCountがなければ、前の層のoutputCountにする
+                if (!df.inputCount && (i > 0 && defs[i - 1].outputCount)) {
+                    df.inputCount = defs[i - 1].outputCount
+                }
+                // outputCountがなければ、次の層のinputCountにする
+                if (!df.outputCount && (i < defs.size() - 1 && defs[i + 1].inputCount)) {
+                    df.outputCount = defs[i - 1].inputCount
+                }
+                switch (df.name) {
+                    case "fc":
+                        break
+                    case "sm":
+                    case "si":
+                    case "ms":
+                        // Sigmoid層、Softmax層、MinSquared層、は、入力ユニット数＝出力ユニット数
+                        if (!df.inputCount && df.outputCount) {
+                            df.inputCount = df.outputCount
+                        }
+                        if (!df.outputCount && df.inputCount) {
+                            df.outputCount = df.inputCount
+                        }
+                        break
+                    case "cv":
+                        if (!df.inputCount || !df.outputCount) {
+                            ConvLayer.setInputAndOutputCount(df)
+                        }
+                        assert df.inputCount && df.outputCount
+                        break
+                    case "pl":
+                        if (!df.inputCount || !df.outputCount) {
+                            PoolingLayer.setInputAndOutputCount(df)
+                        }
+                        break
+                    default:
+                        throw new RuntimeException("Invalid Layer Def!:$df")
+                }
+            }
+        }
+        if (defs.any { !it.inputCount || !it.outputCount }) {
+            throw new RuntimeException("Something wrong in layer defs!")
+        }
     }
 
     def Layer getLayer(String name, List<Neuron> inputs, List<Neuron> outputs, Map opt = [:]) {
