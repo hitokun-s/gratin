@@ -105,7 +105,7 @@ class NetSpec extends Specification {
                 [name: 'fc'],
                 [name: 'sm', outputCount: 3]
             ]
-            def net = new Net(defs, 4)
+            def net = new Net(defs)
             def samples = TestUtil.getIris()
 
             def n = new Normalizer(samples.collect { it.in }) // this changed 'in' data of samples!!
@@ -129,7 +129,7 @@ class NetSpec extends Specification {
                 [name: 'fc'],
                 [name: 'sm', outputCount: 3]
             ]
-            def net = new Net(defs, 4)
+            def net = new Net(defs)
             def samples = TestUtil.getIris()
             def division = divide(samples, 0.2)
             def dataForTest = division.test
@@ -162,7 +162,7 @@ class NetSpec extends Specification {
                 [name: 'fc'],
                 [name: 'sm', outputCount: 4]
             ]
-            def net = new Net(defs, 4)
+            def net = new Net(defs)
             def sample = [
                 [in: [1, 2, 3, 4], out: [0, 1, 0, 0]],
                 [in: [1, 2, 1, 2], out: [1, 0, 0, 0]],
@@ -194,12 +194,12 @@ class NetSpec extends Specification {
     def "auto encoder"() {
         given:
             def defs = [
-                [name: 'fc', count: 3],
-                [name: 'si', count: 3],
-                [name: 'fc', count: 4],
-                [name: 'ms', count: 4]
+                [name: 'fc', inputCount: 4, outputCount:3],
+                [name: 'si'],
+                [name: 'fc'],
+                [name: 'ms', outputCount: 4]
             ]
-            def net = new Net(defs, 4)
+            def net = new Net(defs)
             def samples = [
                 [in: [1, 2, 3, 4], out: [1, 2, 3, 4]],
                 [in: [4, 5, 6, 7], out: [4, 5, 6, 7]],
