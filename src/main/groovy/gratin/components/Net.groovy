@@ -81,13 +81,16 @@ class Net {
         // batch learning
         while (toContinue) {
             epoch++
-            log.debug "epoch:$epoch, cost:${getError(teachers)}"
 //            toContinue = false
+            def totalError = 0
             teachers.each { Map teacher ->
                 forward(teacher.in)
+                totalError += layers.last().getError(teacher.out) // TODO ConvNetJS‚Ì‚æ‚¤‚ÉAforward‚Ì–ß‚è’l‚É‚·‚é‚Æ‚¢‚¤ˆÄ‚à
                 backward(teacher.out)
             }
             layers*.update()
+
+            log.debug "epoch:$epoch, cost:$totalError"
             if (epochCnt && epoch > epochCnt) {
                 toContinue = false
             }
