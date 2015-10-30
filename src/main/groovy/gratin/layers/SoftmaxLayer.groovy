@@ -23,6 +23,11 @@ class SoftmaxLayer extends Layer{
     @Override
     def forward() {
         Z = 0
+        // prevent overflow
+        def maxValue = inputs.max{it.value}.value
+        pairCnt.times{int idx ->
+            inputs[idx].value -= maxValue
+        }
         pairCnt.times{ int idx ->
             Z += (outputs[idx].value = Math.exp(inputs[idx].value))
         }
