@@ -162,7 +162,7 @@ class Util {
         def avg = avg(data)
         def deviation = sd(data)
         data.eachWithIndex { double d, int i ->
-            data[i] = (d - avg) / deviation
+            data[i] = deviation > 0 ? (d - avg) / deviation : 0 // TODO Is this right?
         }
     }
 
@@ -227,6 +227,8 @@ class Util {
      * ex.
      * ["classA", "classB", "classC"] will be converted to
      * [classA:[1,0,0], classB:[0,1,0],classC:[0,0,1]]
+     * [0,1,2,3,4,5,6,7,8,9] will be converted to
+     * [0:[1,0,0,0,0,0,0,0,0,0], 1:[0,1,0,0,0,0,0,0,0,0], ....]
      */
     static Map vecMap(List list) {
         // arg list should be unique list
