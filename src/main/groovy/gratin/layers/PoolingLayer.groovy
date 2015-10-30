@@ -30,14 +30,14 @@ class PoolingLayer extends Layer {
         super(inputs, outputs)
 
         this.inputs = new NMatrix3D(inputs, opt.channelCount, opt.in.height, opt.in.width)
-        this.outputs = new NMatrix3D(inputs, opt.channelCount, opt.out.height, opt.out.width)
+        this.outputs = new NMatrix3D(outputs, opt.channelCount, opt.out.height, opt.out.width)
 
         assert this.inputs.depth == this.outputs.depth // 入力チャネル数＝出力チャネル数、にならないとおかしい
 
         channelSize = opt.channelCount
         windowSize = opt.windowSize ?: defOpts.windowSize
         stride = opt.stride ?: defOpts.stride
-        assert (int) ((inputs.row - 1) / stride) + 1 == outputs.row // stride > 1なら出力サイズは縮小する
+        assert (int) ((this.inputs.row - 1) / stride) + 1 == this.outputs.row // stride > 1なら出力サイズは縮小する
 
         createBond()
     }
@@ -102,7 +102,7 @@ class PoolingLayer extends Layer {
                 height : (int) ((opt.in.height - 1) / opt.stride) + 1,
                 width : (int) ((opt.in.width - 1) / opt.stride) + 1
             ]
-            df.outputCount = opt.filterTypeCount * opt.out.height * opt.out.width
+            df.outputCount = opt.channelCount * opt.out.height * opt.out.width
         }
     }
 }
