@@ -100,7 +100,7 @@ class ConvLayerSpec extends Specification {
             def filters = new Matrix4D(window)
 
             // RGBを別々の入力として、別々の層で処理する（そうしないと通常の画像フィルタにならない）。各inputは、深さ１の行列
-            def (inputR, inputG, inputB) = ImageUtil.imageToNMatrix3D(img).collect { new NMatrix3D(it) }
+            def (inputR, inputG, inputB) = ImageUtil.imageToMatrix(img).collect {Matrix m -> new NMatrix3D(new NMatrix(m)) }
 
         when:
             long totalTime = 0
