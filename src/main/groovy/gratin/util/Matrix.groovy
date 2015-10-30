@@ -163,26 +163,26 @@ class Matrix extends ArrayList<ArrayList> {
     /**
      * 全要素の和
      */
-    public double sum() {
+    public double sumValue() {
         ((List)this).sum {
             ((List)it).sum()
         }
     }
 
-    public double max() {
+    public double maxValue() {
         ((List)this).collect {
             ((List)it).max()
         }.max()
     }
 
-    public double min() {
+    public double minValue() {
         ((List)this).collect {
             ((List)it).min()
         }.min()
     }
 
     public Matrix translate(double max, double min) {
-        ((this - this.min()) / (this.max() - this.min())) * (max - min) + min
+        ((this - this.minValue()) / (this.maxValue() - this.minValue())) * (max - min) + min
     }
 
     /**
@@ -232,5 +232,10 @@ class Matrix extends ArrayList<ArrayList> {
      */
     public List getEachIndex(int totalIndex){
         [totalIndex / this.colCount, totalIndex % this.colCount]
+    }
+
+    // 1次元配列に戻す。toVec() とかの方がいい？
+    public List getValues(){
+        this.sum()
     }
 }
