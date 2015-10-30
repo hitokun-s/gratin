@@ -166,7 +166,7 @@ class MatrixSpec extends Specification {
             ])
     }
 
-    def "sum"() {
+    def "sumValue"() {
         given:
             def m = new Matrix([
                 [1, 2, 3],
@@ -174,12 +174,12 @@ class MatrixSpec extends Specification {
                 [7, 8, 9]
             ])
         when:
-            def res = m.sum()
+            def res = m.sumValue()
         then:
             res == 45
     }
 
-    def "max"() {
+    def "maxValue"() {
         given:
             def m = new Matrix([
                 [1, 2, 3],
@@ -187,12 +187,12 @@ class MatrixSpec extends Specification {
                 [7, 8, 5]
             ])
         when:
-            def res = m.max()
+            def res = m.maxValue()
         then:
             res == 9
     }
 
-    def "min"() {
+    def "minValue"() {
         given:
             def m = new Matrix([
                 [5, 2, 3],
@@ -200,9 +200,22 @@ class MatrixSpec extends Specification {
                 [7, 8, 9]
             ])
         when:
-            def res = m.min()
+            def res = m.minValue()
         then:
             res == 1
+    }
+
+    def "getValues"() {
+        given:
+            def m = new Matrix([
+                [5, 2, 3],
+                [4, 1, 6],
+                [7, 8, 9]
+            ])
+        when:
+            def res = m.values
+        then:
+            res == [5,2,3,4,1,6,7,8,9]
     }
 
     def "translate"() {
