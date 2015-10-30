@@ -49,7 +49,11 @@ class Weight extends HashMap<List<Neuron>, Double>{
         if(!super.get(key)){
             key = key.reverse()
         }
-        assert super.get(key)
+        try{
+            assert super.get(key)
+        }catch(AssertionError e){
+            log.error(e)
+        }
         super.put(key, value)
     }
 
@@ -59,7 +63,12 @@ class Weight extends HashMap<List<Neuron>, Double>{
         if(!super.get(key)){
             key = (key as List).reverse()
         }
-        assert super.get(key)
+        try{
+            assert super.get(key)
+        }catch(AssertionError e){
+            log.error(e)
+            super.put(key, 0)
+        }
         super.get(key)
     }
 
