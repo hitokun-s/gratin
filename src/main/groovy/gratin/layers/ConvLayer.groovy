@@ -91,8 +91,8 @@ class ConvLayer extends Layer{
     @Override
     def update(){
         sharedWeights.forEachWithIndex {List<Bond> bonds, int fIdx, int cIdx, int row, int col ->
-            def gradH = bonds.sum{Bond b -> b.wd} //
-            def h = filters[fIdx][cIdx][row][col] // フィルター重み勾配 = それを共有している仮重み勾配の総和
+            def gradH = bonds.sum{Bond b -> b.wd} // フィルター重み勾配 = それを共有している仮重み勾配の総和
+            def h = filters[fIdx][cIdx][row][col]
             def decay = 0.0001 * h
             h -= lr * (gradH + decay) // フィルター重みを更新
             filters[fIdx][cIdx][row][col] = h

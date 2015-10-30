@@ -37,6 +37,7 @@ class Net {
         defs.each { Map df ->
             def outputs = neurons(df.outputCount)
             layers << getLayer(df.name, inputs, outputs, df.opt)
+            log.debug("${df.name} created!!")
             inputs = outputs // share reference between 2 layers
         }
     }
@@ -90,7 +91,6 @@ class Net {
             if (epochCnt && epoch > epochCnt) {
                 toContinue = false
             }
-//            lr *= 0.99 // ŠeLayer.update()‚ÖˆÚs
         }
     }
 
