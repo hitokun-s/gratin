@@ -125,7 +125,7 @@ class Net {
                 }
                 // outputCount‚ª‚È‚¯‚ê‚ÎAŸ‚Ì‘w‚ÌinputCount‚É‚·‚é
                 if (!df.outputCount && (i < defs.size() - 1 && defs[i + 1].inputCount)) {
-                    df.outputCount = defs[i - 1].inputCount
+                    df.outputCount = defs[i + 1].inputCount
                 }
                 switch (df.name) {
                     case "fc":
