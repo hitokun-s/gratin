@@ -2,7 +2,6 @@ Gratin
 ===
 
 Machine Learning Tool in [Groovy](http://www.groovy-lang.org/)  
-Deep learning will be covered in near future. 
 
 ##Components
 
@@ -12,17 +11,21 @@ Deep learning will be covered in near future.
 - Softmax Layer
 - Fully Connected Layer
 - Sigmoid Layer
+- Convolution Layer
+- Pooling Layer
 
 ##Convenient Utilities
 
 - Weight ( between unit pair )
-- Matrix
+- Bond
+- Matrix, Matrix3D
 - Huffman Tree
 - Normalizer ( special closure )
 
 ##Benchmark Tests
 
 - IRIS data
+- MNIST data
 
 ##Thanks
 
