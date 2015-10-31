@@ -70,22 +70,22 @@ class GMatrix extends ArrayList<ArrayList> {
     }
 
     // クロージャを引数にするなら、下記メソッドは可能でもいい気がする
-//    public double sum() {
-//        ((List)this).sum {
-//            ((List)it).sum()
+//    public double sumValue() {
+//        ((List)this).sumValue {
+//            ((List)it).sumValue()
 //        }
 //    }
 //
-//    public double max() {
+//    public double maxValue() {
 //        ((List)this).collect {
-//            ((List)it).max()
-//        }.max()
+//            ((List)it).maxValue()
+//        }.maxValue()
 //    }
 //
-//    public double min() {
+//    public double minValue() {
 //        ((List)this).collect {
-//            ((List)it).min()
-//        }.min()
+//            ((List)it).minValue()
+//        }.minValue()
 //    }
 
     /**

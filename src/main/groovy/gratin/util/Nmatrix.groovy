@@ -166,21 +166,21 @@ class NMatrix extends ArrayList<ArrayList<Neuron>> {
         [x, y].transpose().collect { xx, yy -> xx * yy }.sum()
     }
 
-    // 名前をsumにすると、List.sum()が使えなくなる。List.sum()は、全要素を1リストにまとめるのに便利。
+    // 名前をsumにすると、List.sumValue()が使えなくなる。List.sumValue()は、全要素を1リストにまとめるのに便利。
     public double sumValue() {
         ((List) this).sum { List<Neuron> list ->
             ((List<Neuron>) list).sum { it.value }
         }
     }
 
-    // 名前をmaxにすると、List.max()が使えなくなる。
+    // 名前をmaxにすると、List.maxValue()が使えなくなる。
     public double maxValue() {
         ((List) this).collect { List<Neuron> list ->
             ((List) list).max { it.value }
         }.max { it.value }.value
     }
 
-    // 名前をminにすると、List.min()が使えなくなる。
+    // 名前をminにすると、List.minValue()が使えなくなる。
     public double minValue() {
         ((List) this).collect { List<Neuron> list ->
             ((List) list).min { it.value }
