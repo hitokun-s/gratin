@@ -3,6 +3,7 @@ package gratin.components
 import gratin.layers.ConvLayer
 import gratin.layers.MinSquaredLayer
 import gratin.layers.PoolingLayer
+import groovy.json.JsonOutput
 import groovy.util.logging.Log4j
 import gratin.layers.FullyConnLayer
 import gratin.layers.Layer
@@ -34,9 +35,11 @@ class Net {
         assert defs.every { Map df -> df.inputCount && df.outputCount }
 
         def inputs = neurons(defs[0].inputCount)
-        defs.each { Map df ->
+        defs.eachWithIndex { Map df, int idx ->
             def outputs = neurons(df.outputCount)
-            layers << getLayer(df.name, inputs, outputs, df.opt)
+            def layer = getLayer(df.name, inputs, outputs, df.opt)
+            layer.idx = idx
+            layers << layer
             log.debug("${df.name} created!!")
             inputs = outputs // share reference between 2 layers
         }
@@ -83,7 +86,10 @@ class Net {
             epoch++
 //            toContinue = false
             def totalError = 0
-            teachers.each { Map teacher ->
+            teachers.eachWithIndex { Map teacher, int idx ->
+                if(idx > 0 && idx % 50 == 0){
+                    log.debug("processed data count up to:$idx")
+                }
                 forward(teacher.in)
                 totalError += layers.last().getError(teacher.out) // TODO ConvNetJS‚Ì‚æ‚¤‚ÉAforward‚Ì–ß‚è’l‚É‚·‚é‚Æ‚¢‚¤ˆÄ‚à
                 backward(teacher.out)
@@ -94,6 +100,9 @@ class Net {
             if (epochCnt && epoch > epochCnt) {
                 toContinue = false
             }
+//            if (epochCnt % 5 == 0) {
+//                saveParams("${new Date().format('yyyy-MM-dd-HH-mm-ss')}.json")
+//            }
         }
     }
 
@@ -175,5 +184,19 @@ class Net {
             case "pl": new PoolingLayer(inputs, outputs, opt); break
             default: throw new RuntimeException("Invalid Layer Def!")
         }
+    }
+
+    /**
+     * save parameters in JSON file
+     * refs : http://stackoverflow.com/questions/19522919/reading-json-object-from-txt-file-in-groovy
+     */
+    def saveParams(String fileName = "gratin.json") {
+        def saveFile = new File(fileName)
+        def infos = layers.collect {
+            it.getInfo()
+        }
+        def json = JsonOutput.toJson(infos)
+//        saveFile.text = JsonOutput.prettyPrint(json) // this makes too many lines
+        saveFile.text = json
     }
 }

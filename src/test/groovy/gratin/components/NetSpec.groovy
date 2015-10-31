@@ -1,5 +1,6 @@
 package gratin.components
 
+import gratin.util.Matrix
 import gratin.util.Normalizer
 import gratin.util.TestUtil
 import gratin.util.Util
@@ -221,5 +222,59 @@ class NetSpec extends Specification {
             nearlyEquals(net.product(n([1, 2, 3, 4])), n([1, 2, 3, 4]))
             nearlyEquals(net.product(n([4, 5, 6, 7])), n([4, 5, 6, 7]))
             nearlyEquals(net.product(n([7, 8, 9, 10])), n([7, 8, 9, 10]))
+    }
+
+
+    def "image classification test"(){
+        given:
+            List<Map> mnist = TestUtil.getMNIST(10000) // maxValue : 600000 rec
+            // data example => mnist[0].image : Matrix, mnist[0].label : 5
+            def defs = [
+                [name: 'cv', opt:[channelCount:1, height: 28, width:28, filterTypeCount:10]],
+                [name: 'si'],
+                [name: 'pl', opt:[channelCount:10, in:[height:28, width:28]]],
+                [name: 'fc'],
+                [name: 'sm', outputCount:10]
+            ]
+            def net = new Net(defs)
+            def vecMap = Util.vecMap([0,1,2,3,4,5,6,7,8,9])
+            mnist.each{Map map ->
+                map.image = ((Matrix)(map.image)).values
+                map.label = vecMap[map.label]
+            }
+            def n = new Normalizer(mnist.collect { it.image }) // TODO ここでimageの中身も正規化されたものになる！よくない。
+            def teachers = mnist.collect{
+                [in:it.image, out:it.label]
+            }
+        when:
+            10.times{
+                teachers.collate(10).eachWithIndex{List miniBatch, int idx ->
+                    log.debug "miniBatch idx:$idx"
+//                    assert miniBatch.size() == 10
+                    net.train(miniBatch, 3)
+                    if(idx % 10 == 0){
+                        log.debug "save params!"
+                        net.saveParams("mnist.json") // overwrite same file
+                    }
+                }
+            }
+        then:
+            vecMap[1] == [0,1,0,0,0,0,0,0,0,0]
+    }
+
+    def "saveParams"(){
+        given:
+            def defs = [
+                [name: 'cv', opt:[channelCount:1, height: 28, width:28, filterTypeCount:10]],
+                [name: 'si'],
+                [name: 'pl', opt:[channelCount:10, in:[height:28, width:28]]],
+                [name: 'fc'],
+                [name: 'sm', outputCount:10]
+            ]
+            def net = new Net(defs)
+        when:
+            net.saveParams()
+        then:
+            true
     }
 }

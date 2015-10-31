@@ -27,6 +27,7 @@ abstract class Layer {
 
     List<Neuron> inputs
     List<Neuron> outputs
+    int idx
 
     List<Double> teacher // only used by output layer
 
@@ -39,8 +40,10 @@ abstract class Layer {
     }
 
     abstract def forward()
+
     abstract def backward()
-    def update(){} // パラメータ更新用。必要なLayer（FullyConnLayer, ConvLayer）でOverrideすること。
+
+    def update() {} // パラメータ更新用。必要なLayer（FullyConnLayer, ConvLayer）でOverrideすること。
 
     /**
      * Only output layer should override this
@@ -53,7 +56,7 @@ abstract class Layer {
      * Only output layer should override this
      * @return class index
      */
-    public int predict(){
+    public int predict() {
         throw new RuntimeException("This should not be executed. Please override this, or never call!")
     }
 
@@ -77,9 +80,19 @@ abstract class Layer {
         outputs*.value as double[]
     }
 
-    public void setTeacher(List<Double> teacher){
+    public void setTeacher(List<Double> teacher) {
         assert teacher.size() == outputs.size()
         this.teacher = teacher
+    }
+
+    // サブクラスでOverrideしてパラメータを追加
+    Map getInfo() {
+        [
+            layerIdx      : idx,
+            className: this.class.name,
+            inputs   : inputs.collect{[idx:it.idx, bias:it.bias]},
+            outputs  : outputs.collect{[idx:it.idx, bias:it.bias]}
+        ]
     }
 
 }

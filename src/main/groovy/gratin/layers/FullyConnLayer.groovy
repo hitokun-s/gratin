@@ -56,4 +56,17 @@ class FullyConnLayer extends Layer {
         }
         lr *= 0.99
     }
+
+    @Override
+    Map getInfo(){
+        Map res = super.getInfo()
+        def weights = []
+        inputs.each { Neuron inN ->
+            outputs.each { outN ->
+                weights << [idx1:inN.idx, idx2:outN.idx, w:w[inN, outN]]
+            }
+        }
+        res.weights = weights
+        res
+    }
 }

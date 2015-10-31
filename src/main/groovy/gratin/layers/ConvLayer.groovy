@@ -10,7 +10,7 @@ import gratin.util.*
  * 結合関係を、Neuron同士のマップとして記憶してしまえば、forward／backwardでは、何も考えなくてよい。
  * @author Hitoshi Wada
  */
-class ConvLayer extends Layer{
+class ConvLayer extends Layer {
 
     // [基本方針]
     // フィルタは４つの次元、フィルタ種類、入力チャネル、x座標、y座標、を持つ。
@@ -29,6 +29,7 @@ class ConvLayer extends Layer{
     int filterTypeCount
     int windowSize
     int stride
+    int channelSize
 
     ConvLayer(List<Neuron> inputs, List<Neuron> outputs, Map opt = [:]) {
 
@@ -40,12 +41,12 @@ class ConvLayer extends Layer{
         this.outputs = new NMatrix3D(outputs, opt.filterTypeCount, opt.height, opt.width)
 
         filterTypeCount = opt.filterTypeCount
-        int channelSize = opt.channelCount
+        channelSize = opt.channelCount
 
-        if(opt.filters){
+        if (opt.filters) {
             filters = opt.filters
             windowSize = filters.row
-        }else{
+        } else {
             windowSize = opt.windowSize ?: defOpts.windowSize
             filters = new Matrix4D(filterTypeCount, channelSize, windowSize, windowSize)
         }
@@ -89,9 +90,9 @@ class ConvLayer extends Layer{
     }
 
     @Override
-    def update(){
-        sharedWeights.forEachWithIndex {List<Bond> bonds, int fIdx, int cIdx, int row, int col ->
-            def gradH = bonds.sum{Bond b -> b.wd} // フィルター重み勾配 = それを共有している仮重み勾配の総和
+    def update() {
+        sharedWeights.forEachWithIndex { List<Bond> bonds, int fIdx, int cIdx, int row, int col ->
+            def gradH = bonds.sum { Bond b -> b.wd } // フィルター重み勾配 = それを共有している仮重み勾配の総和
             def h = filters[fIdx][cIdx][row][col]
             def decay = 0.0001 * h
             h -= lr * (gradH + decay) // フィルター重みを更新
@@ -110,6 +111,30 @@ class ConvLayer extends Layer{
         assert opt.channelCount && opt.height && opt.width && opt.filterTypeCount
         df.inputCount = opt.channelCount * opt.height * opt.width
         df.outputCount = opt.filterTypeCount * opt.height * opt.width
+    }
+
+    @Override
+    Map getInfo() {
+        Map res = super.getInfo()
+        res.filters = filters
+//        res.sharedWeights = sharedWeights
+        def sw = []
+        sharedWeights.forEachWithIndex { List<Bond> bonds, int fIdx, int cIdx, int row, int col ->
+            sw << [bonds: bonds.collect{
+                [s:it.s.idx, e:it.e.idx,w:it.w]
+            },
+                   fIdx: fIdx,
+                   cIdx: cIdx,
+                   row: row,
+                   col: col
+            ]
+        }
+        res.sw = sw
+        res.filterTypeCount = filterTypeCount
+        res.windowSize = windowSize
+        res.stride = stride
+        res.channelSize = channelSize
+        res
     }
 
 }

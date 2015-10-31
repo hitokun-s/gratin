@@ -9,6 +9,7 @@ import gratin.util.Matrix4D
 import gratin.util.NMatrix
 import gratin.util.NMatrix3D
 import gratin.util.TestUtil
+import groovy.json.JsonOutput
 import spock.lang.Specification
 
 import javax.imageio.ImageIO
@@ -125,5 +126,60 @@ class ConvLayerSpec extends Specification {
         then:
             true // totalTime:19725 ms = 20 s // そんなに悪くないような？（forward内のshareWeight()の時間を除くと13sくらい）
             // ImageMagickとかだと、何秒くらいなんだろう？
+    }
+
+    def "getInfo"(){
+        given:
+            def (n1, n2, n3, n4, n5, n6, n7, n8, n9, n10,
+                 n11, n12, n13, n14, n15, n16, n17, n18, n19, n20,
+                 n21, n22, n23, n24, n25, n26, n27, n28, n29, n30,
+                 n31, n32, n33, n34, n35, n36, n37, n38, n39, n40,
+                 n41, n42, n43, n44, n45, n46, n47, n48, n49, n50,
+                 n51, n52, n53, n54, n55, n56, n57, n58, n59, n60) = (1..60).collect { new Neuron(idx: it) }
+            // 入力は３チャネル
+            def inputs = new NMatrix3D([
+                new NMatrix([
+                    [n1, n2, n3, n4],
+                    [n5, n6, n7, n8],
+                    [n9, n10, n11, n12]
+                ]),
+                new NMatrix([
+                    [n13, n14, n15, n16],
+                    [n17, n18, n19, n20],
+                    [n21, n22, n23, n24]
+                ]),
+                new NMatrix([
+                    [n25, n26, n27, n28],
+                    [n29, n30, n31, n32],
+                    [n33, n34, n35, n36]
+                ]),
+            ])
+            // 出力は２チャネル（＝フィルタが2種類）
+            def outputs = new NMatrix3D([
+                new NMatrix([
+                    [n37, n38, n39, n40],
+                    [n41, n42, n43, n44],
+                    [n45, n46, n47, n48]
+                ]),
+                new NMatrix([
+                    [n49, n50, n51, n52],
+                    [n53, n54, n55, n56],
+                    [n57, n58, n59, n60]
+                ])
+            ])
+            def layer = new ConvLayer(inputs.toNeurons(), outputs.toNeurons(), [
+                channelCount   : 3,
+                filterTypeCount: 2,
+                windowSize     : 3,
+                height         : 3,
+                width          : 4,
+                stride         : 1
+            ])
+        when:
+            def saveFile = new File("ConvLayer.json")
+            def json = JsonOutput.toJson(layer.getInfo())
+            saveFile.text = json
+        then:
+            true
     }
 }

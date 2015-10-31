@@ -105,4 +105,14 @@ class PoolingLayer extends Layer {
             df.outputCount = opt.channelCount * opt.out.height * opt.out.width
         }
     }
+
+    @Override
+    Map getInfo(){
+        Map res = super.getInfo()
+        res.windowSize = windowSize
+        res.stride = stride
+        res.channelSize = channelSize
+        res
+    }
+
 }
