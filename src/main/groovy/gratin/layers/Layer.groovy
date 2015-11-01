@@ -45,7 +45,7 @@ abstract class Layer {
 
     abstract def backward()
 
-    def update() {} // パラメータ更新用。必要なLayer（FullyConnLayer, ConvLayer）でOverrideすること。
+    def update(int cnt) {} // パラメータ更新用。必要なLayer（FullyConnLayer, ConvLayer）でOverrideすること。
 
     /**
      * Only output layer should override this

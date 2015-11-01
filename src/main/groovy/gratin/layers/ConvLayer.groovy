@@ -19,7 +19,7 @@ class ConvLayer extends Layer {
     // フィルタ重み共有は、sharedWeights[フィルタ種類][入力チャネル][x座標][y座標]に、bondリストをセットすることで実現する
 
     static def defOpts = [
-        stride    : 4,
+        stride    : 4, // TODO 未使用となっている
         windowSize: 5
     ]
 
@@ -92,9 +92,9 @@ class ConvLayer extends Layer {
     }
 
     @Override
-    def update() {
+    def update(int cnt) {
         sharedWeights.forEachWithIndex { List<Bond> bonds, int fIdx, int cIdx, int row, int col ->
-            def gradH = bonds.sum { Bond b -> b.wd } // フィルター重み勾配 = それを共有している仮重み勾配の総和
+            def gradH = bonds.sum { Bond b -> b.wd }/cnt // フィルター重み勾配 = それを共有している仮重み勾配の総和
             def h = filters[fIdx][cIdx][row][col]
             def decay = 0.0001 * h
             h -= lr * (gradH + decay) // フィルター重みを更新

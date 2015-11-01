@@ -89,8 +89,9 @@ class Net {
      * TODO Should be inside Layer? Because "layer.*" is annoying...
      *
      * @param teachers List<[in:double[], out.double]>
+     * @return averaged cost
      */
-    public void train(List<Map> teachers, int epochCnt = 1500) {
+    public double train(List<Map> teachers, int epochCnt = 1500) {
 
         log.info "let's train!"
 
@@ -100,7 +101,7 @@ class Net {
         boolean toContinue = true
 
         int epoch = 0
-
+        double cost = 0
         // batch learning
         while (toContinue) {
             epoch++
@@ -111,12 +112,27 @@ class Net {
                     log.debug("processed data count up to:$idx")
                 }
                 forward(teacher.in)
-                totalError += layers.last().getError(teacher.out) // TODO ConvNetJSのように、forwardの戻り値にするという案も
+                def err = layers.last().getError(teacher.out) // TODO ConvNetJSのように、forwardの戻り値にするという案も
+                totalError += err
                 backward(teacher.out)
             }
-            layers*.update()
-
-            log.debug "epoch:$epoch, cost:$totalError"
+            layers*.update(teachers.size())
+//            while(retries){
+//                def tmp = []
+//                log.debug "retry! retry layer count:${retries.size()}"
+//                retries.each{Map teacher ->
+//                    forward(teacher.in)
+//                    def err = layers.last().getError(teacher.out)
+//                    if(err > 3){
+//                        tmp << teacher
+//                    }
+//                    backward(teacher.out)
+//                }
+//                layers*.update(retries.size())
+//                retries = tmp
+//            }
+            cost = totalError / teachers.size()
+            log.debug "epoch:$epoch, avg cost:$cost"
             if (epoch >= epochCnt) {
                 toContinue = false
             }
@@ -124,6 +140,7 @@ class Net {
 //                saveParams("${new Date().format('yyyy-MM-dd-HH-mm-ss')}.json")
 //            }
         }
+        cost
     }
 
     public List<Double> product(List<Double> data) {

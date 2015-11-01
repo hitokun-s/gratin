@@ -46,11 +46,11 @@ class FullyConnLayer extends Layer {
     }
 
     @Override
-    def update(){
+    def update(int cnt){
         inputs.each { Neuron inN ->
             outputs.each { outN ->
                 def decay = 0.0001 * w[inN, outN]
-                w[inN, outN] -= lr * (wd[inN, outN] + decay)
+                w[inN, outN] -= lr * (wd[inN, outN]/cnt + decay)
 //                        layer.w[inN, outN] -= lr * layer.wd[inN, outN]
                 // layer.wd[inN, outN] = 0 // this cause weird error, I don,t know why
                 wd[inN, outN] = 0.000000000000000000000000000000000000000000000001 as double
