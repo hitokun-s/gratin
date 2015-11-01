@@ -1,5 +1,6 @@
 package gratin.components
 
+import gratin.layers.ConvLayer
 import gratin.util.Matrix
 import gratin.util.Normalizer
 import gratin.util.TestUtil
@@ -281,9 +282,50 @@ class NetSpec extends Specification {
             pca > 0.7
     }
 
+    // パラメータ参考 : http://mochajl.readthedocs.org/en/latest/tutorial/mnist.html
     def "MNIST prediction test with 10000 teacher data results in pca > 80%"(){
         given:
             List<Map> mnist = TestUtil.getMNIST(11000) // maxValue : 600000 rec
+            // data example => mnist[0].image : Matrix, mnist[0].label : 5
+            def defs = [
+                [name: 'cv', opt:[channelCount:1, height: 28, width:28, filterTypeCount:20]],
+                [name: 'si'],
+                [name: 'pl', opt:[channelCount:20, in:[height:28, width:28], stride:3, windowSize:3]],
+                [name: 'fc'],
+                [name: 'sm', outputCount:10]
+            ]
+            def net = new Net(defs)
+            def vecMap = Util.vecMap([0,1,2,3,4,5,6,7,8,9])
+            mnist.each{Map map ->
+                map.image = ((Matrix)(map.image)).values
+                map.label = vecMap[map.label]
+            }
+            def n = new Normalizer(mnist.collect { it.image }) // TODO ここでimageの中身も正規化されたものになる！よくない。
+            def teachers = mnist.collect{
+                [in:it.image, out:it.label]
+            }
+        when:
+            1.times{
+                teachers[0..2999].collate(20).eachWithIndex{List miniBatch, int idx ->
+                    log.debug "miniBatch idx:$idx"
+                    net.train(miniBatch, 1)
+                }
+            } // avg costは、50周目を超えたあたりで2を切り、100周目を越えたあたりで1.0を切るようになる。
+            println "predict:${net.predict(teachers[0].in)}, answer:${teachers[0].out.indexOf(1 as double)}" // 5
+            println "predict:${net.predict(teachers[1].in)}, answer:${teachers[1].out.indexOf(1 as double)}" // 0
+            println "predict:${net.predict(teachers[2].in)}, answer:${teachers[2].out.indexOf(1 as double)}" // 4
+            println "predict:${net.predict(teachers[3].in)}, answer:${teachers[3].out.indexOf(1 as double)}" // 1
+
+            log.debug "Let's go to the test data with a lot of prayer..."
+            def pca = net.getPCA(teachers[10000..10999]) // 未知データでテスト
+            log.debug "pca:$pca"
+        then:
+            pca > 0.8 // first trial : 0.809  ohhhhh
+    }
+
+    def "MNIST prediction test for more complex architecture"(){
+        given:
+            List<Map> mnist = TestUtil.getMNIST(2100) // maxValue : 600000 rec
             // data example => mnist[0].image : Matrix, mnist[0].label : 5
             def defs = [
                 [name: 'cv', opt:[channelCount:1, height: 28, width:28, filterTypeCount:10]],
@@ -304,7 +346,7 @@ class NetSpec extends Specification {
             }
         when:
             1.times{
-                teachers[0..9999].collate(10).eachWithIndex{List miniBatch, int idx ->
+                teachers[0..999].collate(20).eachWithIndex{List miniBatch, int idx ->
                     log.debug "miniBatch idx:$idx"
                     net.train(miniBatch, 1)
                 }
@@ -315,7 +357,7 @@ class NetSpec extends Specification {
             println "predict:${net.predict(teachers[3].in)}, answer:${teachers[3].out.indexOf(1 as double)}" // 1
 
             log.debug "Let's go to the test data with a lot of prayer..."
-            def pca = net.getPCA(teachers[10000..10999]) // 未知データでテスト
+            def pca = net.getPCA(teachers[2000..2099]) // 未知データでテスト
             log.debug "pca:$pca"
         then:
             pca > 0.8 // first trial : 0.809  ohhhhh
