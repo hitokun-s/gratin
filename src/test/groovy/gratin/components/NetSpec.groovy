@@ -224,10 +224,25 @@ class NetSpec extends Specification {
             nearlyEquals(net.product(n([7, 8, 9, 10])), n([7, 8, 9, 10]))
     }
 
+    def "vec to label"(){
+        when:
+            List<Map> mnist = TestUtil.getMNIST(5)
+            def vecMap = Util.vecMap([0,1,2,3,4,5,6,7,8,9])
+            mnist.each{Map map ->
+                map.image = ((Matrix)(map.image)).values
+                map.label = vecMap[map.label]
+            }
+            def teachers = mnist.collect{
+                [in:it.image, out:it.label]
+            }
+        then:
+            teachers[0].out == [0,0,0,0,0,1,0,0,0,0]
+            teachers[0].out.indexOf(1 as double) == 5
+    }
 
-    def "image classification test"(){
+    def "MNIST prediction test with 3000 teacher data results in pca > 70%"(){
         given:
-            List<Map> mnist = TestUtil.getMNIST(10000) // maxValue : 600000 rec
+            List<Map> mnist = TestUtil.getMNIST(5000) // maxValue : 600000 rec
             // data example => mnist[0].image : Matrix, mnist[0].label : 5
             def defs = [
                 [name: 'cv', opt:[channelCount:1, height: 28, width:28, filterTypeCount:10]],
@@ -247,19 +262,23 @@ class NetSpec extends Specification {
                 [in:it.image, out:it.label]
             }
         when:
-            10.times{
-                teachers.collate(10).eachWithIndex{List miniBatch, int idx ->
+            1.times{
+                // 最初の3000サンプルだけで訓練
+                teachers[0..2999].collate(10).eachWithIndex{List miniBatch, int idx ->
                     log.debug "miniBatch idx:$idx"
-//                    assert miniBatch.size() == 10
-                    net.train(miniBatch, 3)
-                    if(idx % 10 == 0){
-                        log.debug "save params!"
-                        net.saveParams("mnist.json") // overwrite same file
-                    }
+                    net.train(miniBatch, 1)
                 }
             }
+            println "predict:${net.predict(teachers[0].in)}, answer:${teachers[0].out.indexOf(1 as double)}" // 5
+            println "predict:${net.predict(teachers[1].in)}, answer:${teachers[1].out.indexOf(1 as double)}" // 0
+            println "predict:${net.predict(teachers[2].in)}, answer:${teachers[2].out.indexOf(1 as double)}" // 4
+            println "predict:${net.predict(teachers[3].in)}, answer:${teachers[3].out.indexOf(1 as double)}" // 1
+
+            log.debug "Let's go to the test data with a lot of prayer..."
+            def pca = net.getPCA(teachers[4000..4999]) // 未知データでテスト
+            log.debug "pca:$pca"
         then:
-            vecMap[1] == [0,1,0,0,0,0,0,0,0,0]
+            pca > 0.8
     }
 
     def "saveParams"(){
@@ -276,5 +295,32 @@ class NetSpec extends Specification {
             net.saveParams()
         then:
             true
+    }
+
+    def "readParams and construct"(){
+        given:
+            List<Map> mnist = TestUtil.getMNIST(100)
+            def vecMap = Util.vecMap([0,1,2,3,4,5,6,7,8,9])
+            mnist.each{Map map ->
+                map.image = ((Matrix)(map.image)).values
+                map.label = vecMap[map.label]
+            }
+            def n = new Normalizer(mnist.collect { it.image }) // TODO ここでimageの中身も正規化されたものになる！よくない。
+            def teachers = mnist.collect{
+                [in:it.image, out:it.label]
+            }
+        when:
+            def net = new Net("mnist.json")
+            teachers.collate(10).eachWithIndex{List miniBatch, int idx ->
+                log.debug "miniBatch idx:$idx"
+                net.train(miniBatch, 5)
+            }
+            println net.predict(teachers[0].in) // label : 5
+            println net.predict(teachers[1].in) // label : 0
+            println net.predict(teachers[2].in) // label : 4
+            println net.predict(teachers[3].in) // label : 1
+        then:
+            net.layers.size() == 5
+
     }
 }
