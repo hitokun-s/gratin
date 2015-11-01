@@ -12,6 +12,8 @@ import gratin.util.*
  */
 class ConvLayer extends Layer {
 
+    String name = 'cv'
+
     // [基本方針]
     // フィルタは４つの次元、フィルタ種類、入力チャネル、x座標、y座標、を持つ。
     // フィルタ重み共有は、sharedWeights[フィルタ種類][入力チャネル][x座標][y座標]に、bondリストをセットすることで実現する
@@ -121,8 +123,8 @@ class ConvLayer extends Layer {
         def sw = []
         sharedWeights.forEachWithIndex { List<Bond> bonds, int fIdx, int cIdx, int row, int col ->
             sw << [bonds: bonds.collect{
-                [s:it.s.idx, e:it.e.idx,w:it.w]
-            },
+                    [s:it.s.idx, e:it.e.idx,w:it.w]
+                    },
                    fIdx: fIdx,
                    cIdx: cIdx,
                    row: row,
@@ -135,6 +137,23 @@ class ConvLayer extends Layer {
         res.stride = stride
         res.channelSize = channelSize
         res
+    }
+
+    // reflect parameters
+    @Override
+    public reflect(Map info){
+        super.reflect(info)
+        sharedWeights.forEachWithIndex { List<Bond> bonds, int fIdx, int cIdx, int row, int col ->
+            bonds.clear()
+            List bondsInfo = info.sw.find{
+                it.fIdx == fIdx && it.cIdx == cIdx && it.row == row && it.col == col
+            }.bonds
+            bondsInfo.each { Map map ->
+                def bond = new Bond(inputs.find{it.idx == map.s}, outputs.find{it.idx == map.e})
+                bond.w = map.w
+                bonds << bond
+            }
+        }
     }
 
 }

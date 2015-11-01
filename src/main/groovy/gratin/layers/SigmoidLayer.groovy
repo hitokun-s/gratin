@@ -15,6 +15,8 @@ import static gratin.util.Util.sigmad
 @Log4j
 class SigmoidLayer extends Layer {
 
+    String name = 'si'
+
     int pairCnt
 
     public SigmoidLayer(List<Neuron> inputs, List<Neuron> outputs) {

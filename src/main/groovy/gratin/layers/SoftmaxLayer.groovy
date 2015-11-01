@@ -9,6 +9,8 @@ import groovy.util.logging.Log4j
 @Log4j
 class SoftmaxLayer extends Layer{
 
+    String name = 'sm'
+
     int pairCnt
 
     // normalization factor

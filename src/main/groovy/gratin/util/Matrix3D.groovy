@@ -16,7 +16,15 @@ class Matrix3D extends ArrayList<Matrix>{
     }
 
     Matrix3D(List<Matrix> source){
-        super(source)
+        if(source[0] instanceof Matrix){
+            source.each{
+                this << it
+            }
+        }else{
+            source.each{
+                this << new Matrix(it)
+            }
+        }
     }
 
     public Matrix3D(Matrix m){
@@ -42,6 +50,15 @@ class Matrix3D extends ArrayList<Matrix>{
             res = res ? res + tmp : tmp
         }
         res
+    }
+
+    // cls(value, depth, row, col)
+    public void forEachWithIndex(Closure cls) {
+        depth.times { depth ->
+            this[depth].forEachWithIndex {v,row,col ->
+                cls(v, depth, row, col)
+            }
+        }
     }
 
     // ëSóvëfêî

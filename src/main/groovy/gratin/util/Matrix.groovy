@@ -199,6 +199,14 @@ class Matrix extends ArrayList<ArrayList> {
         res
     }
 
+    public void forEachWithIndex(Closure cls) {
+        rowCount.times { row ->
+            colCount.times { col ->
+                cls(this[row][col], row, col)
+            }
+        }
+    }
+
     /**
      * 矩形領域を切り出す
      * （例）radius = 2 なら、[row][col]を中心にした、5 * 5 の領域を返す

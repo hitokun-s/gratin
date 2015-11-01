@@ -23,6 +23,8 @@ import groovy.util.logging.Log4j
 @Log4j
 abstract class Layer {
 
+    abstract String name
+
     double lr = 0.1 // learning Rate. 必要なら各LayerでOverrideすればいい。
 
     List<Neuron> inputs
@@ -88,11 +90,23 @@ abstract class Layer {
     // サブクラスでOverrideしてパラメータを追加
     Map getInfo() {
         [
-            layerIdx      : idx,
-            className: this.class.name,
-            inputs   : inputs.collect{[idx:it.idx, bias:it.bias]},
-            outputs  : outputs.collect{[idx:it.idx, bias:it.bias]}
+            layerIdx : idx,
+            name     : name,
+            inputs   : inputs.collect { [idx: it.idx, bias: it.bias] },
+            outputs  : outputs.collect { [idx: it.idx, bias: it.bias] }
         ]
+    }
+
+    public reflect(Map info) {
+        this.idx = info.layerIdx
+        this.inputs.eachWithIndex { Neuron n, int i ->
+            n.idx = ((Neuron) info.inputs[i]).idx
+            n.bias = ((Neuron) info.inputs[i]).bias
+        }
+        this.outputs.eachWithIndex { Neuron n, int i ->
+            n.idx = ((Neuron) info.outputs[i]).idx
+            n.bias = ((Neuron) info.outputs[i]).bias
+        }
     }
 
 }

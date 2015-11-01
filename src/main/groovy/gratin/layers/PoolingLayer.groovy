@@ -14,6 +14,8 @@ import gratin.util.NMatrix3D
  */
 class PoolingLayer extends Layer {
 
+    String name = 'pl'
+
     static def defOpts = [
         stride    : 4,
         windowSize: 5

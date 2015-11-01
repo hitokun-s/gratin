@@ -10,6 +10,8 @@ import gratin.util.Weight
 @Log4j
 class FullyConnLayer extends Layer {
 
+    String name = 'fc'
+
     public FullyConnLayer(List<Neuron> inputs, List<Neuron> outputs) {
         super(inputs, outputs)
         // set bias as random

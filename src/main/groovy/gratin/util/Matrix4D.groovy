@@ -17,6 +17,13 @@ class Matrix4D extends ArrayList<Matrix3D>{
         this << new Matrix3D(m)
     }
 
+
+    public Matrix4D(List<List<List<List<Number>>>> source){
+        source.each{
+            this << new Matrix3D(it)
+        }        
+    }
+
     int getDepth2(){
         this.size()
     }
@@ -31,6 +38,15 @@ class Matrix4D extends ArrayList<Matrix3D>{
 
     int getCol(){
         this[0].col
+    }
+
+    // cls(value, depth2, depth, row, col)
+    public void forEachWithIndex(Closure cls) {
+        depth2.times { depth2 ->
+            this[depth2].forEachWithIndex {v,depth,row,col ->
+                cls(v, depth2, depth, row, col)
+            }
+        }
     }
 
     // ëSóvëfêî
