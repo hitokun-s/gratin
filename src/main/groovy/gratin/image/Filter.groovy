@@ -23,7 +23,7 @@ class Filter {
     Matrix exec(Matrix m) {
         def res = m.clone()
         m.forEach { double v, int i, int j ->
-            res[i][j] = (m.partial(i, j, window.size()) * window).sum()
+            res[i][j] = (m.partial(i, j, window.size()) * window).sumValue()
         }
         res
     }
