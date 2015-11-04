@@ -9,7 +9,7 @@ import java.nio.ByteBuffer
  */
 class TestUtil {
 
-    public static List getIris(){
+    public static List getIris() {
         File file = new File(TestUtil.getClassLoader().getResource("data/iris.data.txt").getFile())
         Util.process(file, [0, 1, 2, 3], 4)
     }
@@ -17,9 +17,10 @@ class TestUtil {
     /**
      * refs:http://y-uti.hatenablog.jp/entry/2014/07/23/074845
      * @param limit : 取得する画像データ数
-     * @return List<[image : Matrix, label : int]>
+     * @return List < [ image : Matrix , label : int , mnistIdx: int ] >
      */
-    public static List<Matrix> getMNIST(int limit = 60000){
+    public static List<Matrix> getMNIST(int limit = 60000) {
+        assert limit <= 60000
         // image data
         def stream = new FileInputStream(TestUtil.getClassLoader().getResource("data/train-images.idx3-ubyte").getFile())
         byte[] header = new byte[16] // header data
@@ -36,35 +37,35 @@ class TestUtil {
 
         int cnt = 0
         def res = []
-        while(cnt++ < limit){
+        while (cnt++ < limit) {
             // 1 byte(unsigned byte) for 1 pixel of greyscale, 1 image is made of 28 * 28 pixels
             byte[] tmp = new byte[28 * 28]
             stream.read(tmp)
             // refs : http://stackoverflow.com/questions/4266756/can-we-make-unsigned-byte-in-java
-            int[] tmp2 = tmp.collect{byte unsigned ->
-                (int)(unsigned & 0xFF)
+            int[] tmp2 = tmp.collect { byte unsigned ->
+                (int) (unsigned & 0xFF)
             }
             byte[] tmpLabel = new byte[1]
             labelStream.read(tmpLabel)
-            res << [image : new Matrix((tmp2 as List<Double>).collate(28)), label : (int)tmpLabel[0]]
+            res << [image: new Matrix((tmp2 as List<Double>).collate(28)), label: (int) tmpLabel[0], mnistIdx: cnt - 1]
         }
         stream.close()
         labelStream.close()
         res
     }
 
-    public static boolean nearlyEquals(double d1, int d2){
+    public static boolean nearlyEquals(double d1, int d2) {
         (d1 as Double).round(10) == d2
     }
 
-    public static boolean nearlyEquals(double d1, double d2){
+    public static boolean nearlyEquals(double d1, double d2) {
         println "d1:$d1, d2:$d2"
         (d1 as Double).round(10) == (d1 as Double).round(10)
     }
 
-    public static boolean nearlyEquals(List<Double> list1, List<Double> list2){
-        list1.eachWithIndex{double v, int idx ->
-            if(!nearlyEquals(v, list2[idx])) {
+    public static boolean nearlyEquals(List<Double> list1, List<Double> list2) {
+        list1.eachWithIndex { double v, int idx ->
+            if (!nearlyEquals(v, list2[idx])) {
                 println "Not Equal! : $v in $list1 vs ${list2[idx]} in $list2"
                 return false
             }

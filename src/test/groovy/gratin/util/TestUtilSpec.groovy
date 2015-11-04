@@ -28,5 +28,6 @@ class TestUtilSpec extends Specification {
             mnist[0].image instanceof Matrix
             mnist[0].image.rowCount == 28
             mnist[0].image.colCount == 28
+            mnist[0].mnistIdx == 0
     }
 }
