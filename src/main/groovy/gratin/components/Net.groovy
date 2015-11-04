@@ -279,7 +279,11 @@ class Net {
             if(cnt++ % 50 == 0){
                 log.debug "finished test count:$cnt"
             }
-            it.out.findIndexOf { it == 1.0 } == predict(it.in)
+            def res = (it.out.findIndexOf { it == 1.0 } == predict(it.in))
+            if(!res){
+                log.debug "classification error mnistIdx:${it.mnistIdx}"
+            }
+            res
         }
         trueOrFalse.count { it } / trueOrFalse.size() // ê≥âó¶ÅiPCAÅjÇï‘Ç∑
     }
