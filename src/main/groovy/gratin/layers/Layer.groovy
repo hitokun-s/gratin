@@ -26,6 +26,7 @@ abstract class Layer {
     abstract String name
 
     double lr = 0.1 // learning Rate. 必要なら各LayerでOverrideすればいい。
+    double l2decay_rate = 0.0001 // l2decayの名称があっているか要確認
 
     List<Neuron> inputs
     List<Neuron> outputs

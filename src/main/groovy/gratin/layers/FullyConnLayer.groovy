@@ -49,7 +49,7 @@ class FullyConnLayer extends Layer {
     def update(int cnt){
         inputs.each { Neuron inN ->
             outputs.each { outN ->
-                def decay = 0.0001 * w[inN, outN]
+                def decay = l2decay_rate * w[inN, outN]
                 w[inN, outN] -= lr * (wd[inN, outN]/cnt + decay)
 //                        layer.w[inN, outN] -= lr * layer.wd[inN, outN]
                 // layer.wd[inN, outN] = 0 // this cause weird error, I don,t know why
