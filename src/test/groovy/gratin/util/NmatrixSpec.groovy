@@ -7,9 +7,9 @@ import spock.lang.Specification
 /**
  * @author Hitoshi Wada
  */
-class NmatrixSpec extends Specification {
+class NMatrixSpec extends Specification {
 
-    def "sum"() {
+    def "sumValue"() {
         given:
             def m = new NMatrix([
                 [1, 2, 3],
@@ -22,7 +22,7 @@ class NmatrixSpec extends Specification {
             res == 45
     }
 
-    def "max"() {
+    def "maxValue"() {
         given:
             def m = new NMatrix([
                 [1, 2, 3],
@@ -35,7 +35,7 @@ class NmatrixSpec extends Specification {
             res == 9
     }
 
-    def "min"() {
+    def "minValue"() {
         given:
             def m = new NMatrix([
                 [5, 2, 3],
@@ -68,26 +68,38 @@ class NmatrixSpec extends Specification {
             NMatrix m1 = new NMatrix(5, 5)
             NMatrix m2 = new NMatrix(5, 5)
         when:
-            m1.forEachWithIndexByStride(2){Neuron v,int i,int j,int strideX, int strideY ->
+            m1.forEachWithIndexByStride(2) { Neuron v, int i, int j, int strideX, int strideY ->
                 v.value = 1
             }
-            m2.forEachWithIndexByStride(3){Neuron v,int i,int j,int strideX, int strideY ->
+            m2.forEachWithIndexByStride(3) { Neuron v, int i, int j, int strideX, int strideY ->
                 v.value = 1
             }
         then:
             m1 as Matrix == [
-                [1,0,1,0,1],
-                [0,0,0,0,0],
-                [1,0,1,0,1],
-                [0,0,0,0,0],
-                [1,0,1,0,1]
+                [1, 0, 1, 0, 1],
+                [0, 0, 0, 0, 0],
+                [1, 0, 1, 0, 1],
+                [0, 0, 0, 0, 0],
+                [1, 0, 1, 0, 1]
             ]
             m2 as Matrix == [
-                [1,0,0,1,0],
-                [0,0,0,0,0],
-                [0,0,0,0,0],
-                [1,0,0,1,0],
-                [0,0,0,0,0]
+                [1, 0, 0, 1, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [1, 0, 0, 1, 0],
+                [0, 0, 0, 0, 0]
             ]
+    }
+
+    def "toNeurons"() {
+        given:
+            def m = new NMatrix([
+                [1, 2],
+                [3, 4]
+            ])
+        when:
+            def res = m.toNeurons()
+        then:
+            res == [m[0][0], m[0][1], m[1][0], m[1][1]]
     }
 }

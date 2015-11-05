@@ -45,6 +45,10 @@ class NMatrix extends ArrayList<ArrayList<Neuron>> {
 //        }
 //    }
 
+    public List<Neuron> toNeurons(){
+        this.sum()
+    }
+
     NMatrix plus(NMatrix m) {
         NMatrix res = clone()
         rowCount.times { row ->
